@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Kanji {
+  id        Int      @id @default(autoincrement())
+  kanji     String   @unique
+  strokes   Int
+  reading   String
+  kanji_en  String
+  kanji_es  String
+  on        String
+  kun       String
+  jlpt      Int
+  words     Word[]
+}
+
+model Word {
+  id          Int    @id @default(autoincrement())
+  word_en     String
+  word_es     String
+  reading     String
+  kanji       String
+  jlpt        Int
+  sentence    String
+  sentence_es String
+  sentence_en String
+  kanjiId     Int
+  Kanji       Kanji  @relation(fields: [kanjiId], references: [id])
+}
