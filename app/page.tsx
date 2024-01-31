@@ -20,6 +20,16 @@ export default function Home() {
         </CardContent>
       </Card>
 
+      <div className="w-full max-w-md">
+        <Button className="w-full h-14 text-2xl bg-green-500 hover:bg-green-700">
+          Download
+        </Button>
+        <p className="text-center mt-2 text-sm text-gray-600">
+          v0.1.0-alpha{' '}
+          <span className="text-gray-500">(not ready for production)</span>
+        </p>
+      </div>
+
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
         <Link href="/kanjis">
           <Button className="text-2xl px-8 py-6 bg-[#FF7BAC] hover:bg-[#FF5A93] w-full sm:w-auto">
