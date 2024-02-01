@@ -111,7 +111,11 @@ export default function KanjiDetail() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <h2 className="text-2xl font-semibold">Details</h2>
-                <Link href={`/kanjis/${kanji.id}/edit`} passHref>
+                <Link
+                  className="visible md:invisible"
+                  href={`/kanjis/${kanji.id}/edit`}
+                  passHref
+                >
                   <Button variant="outline">Edit Kanji</Button>
                 </Link>
               </div>
@@ -125,7 +129,16 @@ export default function KanjiDetail() {
               </div>
             </div>
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Readings</h2>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-2xl font-semibold">Details</h2>
+                <Link
+                  className="invisible md:visible"
+                  href={`/kanjis/${kanji.id}/edit`}
+                  passHref
+                >
+                  <Button variant="outline">Edit Kanji</Button>
+                </Link>
+              </div>
               <div className="space-y-2">
                 <div>
                   <span className="font-medium">On&apos;yomi:</span>
