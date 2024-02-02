@@ -37,3 +37,63 @@ export async function GET(
     );
   }
 }
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = parseInt(params.id, 10);
+  const data = await request.json();
+
+  try {
+    const updatedKanji = await prisma.kanji.update({
+      where: { id },
+      data: {
+        kanji: data.kanji,
+        strokes: data.strokes,
+        reading: data.reading,
+        kanji_en: data.kanji_en,
+        kanji_es: data.kanji_es,
+        on: JSON.stringify(data.on),
+        kun: JSON.stringify(data.kun),
+        jlpt: data.jlpt,
+        words: {
+          upsert: data.words.map((word: any) => ({
+            where: { id: word.id || 0 },
+            update: {
+              word_en: word.word_en,
+              word_es: word.word_es,
+              reading: word.reading,
+              kanji: word.kanji,
+              jlpt: word.jlpt,
+              sentence: word.sentence,
+              furigana: word.furigana,
+              sentence_es: word.sentence_es,
+              sentence_en: word.sentence_en,
+            },
+            create: {
+              word_en: word.word_en,
+              word_es: word.word_es,
+              reading: word.reading,
+              kanji: word.kanji,
+              jlpt: word.jlpt,
+              sentence: word.sentence,
+              furigana: word.furigana,
+              sentence_es: word.sentence_es,
+              sentence_en: word.sentence_en,
+            },
+          })),
+        },
+      },
+      include: { words: true },
+    });
+
+    return NextResponse.json(updatedKanji);
+  } catch (error) {
+    console.error('Error updating kanji:', error);
+    return NextResponse.json(
+      { error: 'Error updating kanji' },
+      { status: 500 }
+    );
+  }
+}

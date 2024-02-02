@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
+import Link from 'next/link';
 
 interface Kanji {
   id: number;
@@ -108,7 +109,12 @@ export default function KanjiDetail() {
         <CardContent className="p-6 md:p-8">
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Details</h2>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-2xl font-semibold">Details</h2>
+                <Link href={`/kanjis/${kanji.id}/edit`} passHref>
+                  <Button variant="outline">Edit Kanji</Button>
+                </Link>
+              </div>
               <div className="space-y-2">
                 <p>
                   <span className="font-medium">Strokes:</span> {kanji.strokes}
