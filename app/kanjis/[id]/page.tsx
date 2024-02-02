@@ -258,18 +258,43 @@ function WordCard({
         result.push(textBefore);
       }
 
-      result.push(
-        <ruby key={match.index}>
-          {kanji.includes(word) ? (
+      if (kanji.includes(word)) {
+        const splitKanji = kanji.split(word);
+
+        if (splitKanji[0]) {
+          result.push(
+            <ruby key={`kanji-before-${match.index}`}>
+              {splitKanji[0]}
+              <rt>{reading}</rt>
+            </ruby>
+          );
+        }
+
+        result.push(
+          <ruby key={`kanji-highlight-${match.index}`}>
             <span className="font-bold text-[#FF7BAC] leading-[2.5rem] h-[2.7rem]">
-              {kanji}
+              {word}
             </span>
-          ) : (
-            kanji
-          )}
-          <rt>{reading}</rt>
-        </ruby>
-      );
+            <rt>{reading}</rt>
+          </ruby>
+        );
+
+        if (splitKanji[1]) {
+          result.push(
+            <ruby key={`kanji-after-${match.index}`}>
+              {splitKanji[1]}
+              <rt>{reading}</rt>
+            </ruby>
+          );
+        }
+      } else {
+        result.push(
+          <ruby key={match.index}>
+            {kanji}
+            <rt>{reading}</rt>
+          </ruby>
+        );
+      }
 
       lastIndex = kanjiRegex.lastIndex;
     }
@@ -297,18 +322,32 @@ function WordCard({
         result.push(currentSentence.sentence.slice(lastIndex, match.index));
       }
 
-      result.push(
-        kanji.includes(word) ? (
+      if (kanji.includes(word)) {
+        const splitKanji = kanji.split(word);
+
+        if (splitKanji[0]) {
+          result.push(
+            <span key={`kanji-before-${match.index}`}>{splitKanji[0]}</span>
+          );
+        }
+
+        result.push(
           <span
-            key={`kanji-${match.index}`}
+            key={`kanji-highlight-${match.index}`}
             className="font-bold text-[#FF7BAC] leading-[2.5rem] h-[2.7rem]"
           >
-            {kanji}
+            {word}
           </span>
-        ) : (
-          <span key={`kanji-${match.index}`}>{kanji}</span>
-        )
-      );
+        );
+
+        if (splitKanji[1]) {
+          result.push(
+            <span key={`kanji-after-${match.index}`}>{splitKanji[1]}</span>
+          );
+        }
+      } else {
+        result.push(<span key={`kanji-${match.index}`}>{kanji}</span>);
+      }
 
       lastIndex = kanjiRegex.lastIndex;
     }
