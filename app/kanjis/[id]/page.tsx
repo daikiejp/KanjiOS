@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import CopySentence from '@/utils/copy';
+import Jlpt from '@/components/kanjios/jlpt';
 
 interface Sentence {
   id: number;
@@ -48,7 +49,7 @@ interface Kanji {
   words: Word[];
 }
 
-export default function KanjiDetail() {
+export default function KanjiCard() {
   const [kanji, setKanji] = useState<Kanji | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,10 +57,10 @@ export default function KanjiDetail() {
   const { id } = params;
 
   useEffect(() => {
-    fetchKanjiDetail();
+    fetchKanjiCard();
   }, [id]);
 
-  const fetchKanjiDetail = async () => {
+  const fetchKanjiCard = async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -86,11 +87,19 @@ export default function KanjiDetail() {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Error: {error}
+      </div>
+    );
   }
 
   if (!kanji) {
-    return <div>No kanji data found.</div>;
+    return (
+      <div className="h-screen flex items-center justify-center">
+        No kanji data found.
+      </div>
+    );
   }
 
   return (
@@ -318,7 +327,7 @@ function WordCard({
           <p className="text-xl">
             <span className="font-bold text-[#FF7BAC]">{word}</span> ({reading})
           </p>
-          <Badge variant="secondary">JLPT N{jlpt}</Badge>
+          <Jlpt jlpt={jlpt as 1 | 2 | 3 | 4 | 5} />
         </div>
         <div className="flex space-x-4 mb-3">
           <div>
