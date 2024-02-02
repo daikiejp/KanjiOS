@@ -34,6 +34,7 @@ model Word {
   kanji       String
   jlpt        Int
   sentence    String
+  furigana    String
   sentence_es String
   sentence_en String
   kanjiId     Int

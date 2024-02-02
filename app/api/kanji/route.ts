@@ -23,6 +23,7 @@ export async function POST(request: Request) {
             kanji: word.kanji,
             jlpt: word.jlpt,
             sentence: word.sentence,
+            furigana: word.furigana,
             sentence_es: word.sentence_es,
             sentence_en: word.sentence_en,
           })),

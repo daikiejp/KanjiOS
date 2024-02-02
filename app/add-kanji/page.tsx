@@ -16,6 +16,7 @@ const wordSchema = z.object({
   kanji: z.string().min(1, 'Kanji is required'),
   jlpt: z.number().min(1).max(5),
   sentence: z.string().min(1, 'Sentence is required'),
+  furigana: z.string().min(1, 'Furigana is required'),
   sentence_es: z.string().min(1, 'Spanish sentence is required'),
   sentence_en: z.string().min(1, 'English sentence is required'),
 });
@@ -60,6 +61,7 @@ export default function AddKanji() {
           kanji: '',
           jlpt: 5,
           sentence: '',
+          furigana: '',
           sentence_es: '',
           sentence_en: '',
         },
@@ -103,8 +105,7 @@ export default function AddKanji() {
       });
 
       reset();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'Failed to add kanji. Please try again.',
@@ -317,6 +318,16 @@ export default function AddKanji() {
               />
             </div>
             <div>
+              <Label htmlFor={`words.${index}.furigana`}>Furigana</Label>
+              <Controller
+                name={`words.${index}.furigana`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${index}.furigana`} />
+                )}
+              />
+            </div>
+            <div>
               <Label htmlFor={`words.${index}.sentence_es`}>
                 Spanish Sentence
               </Label>
@@ -352,6 +363,7 @@ export default function AddKanji() {
               kanji: '',
               jlpt: 5,
               sentence: '',
+              furigana: '',
               sentence_es: '',
               sentence_en: '',
             })
