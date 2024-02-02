@@ -5,16 +5,9 @@ const prisma = new PrismaClient();
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  if (!params.id) {
-    return NextResponse.json(
-      { error: 'Missing id parameter' },
-      { status: 400 }
-    );
-  }
-
-  const id = parseInt(params.id, 10);
+  const id = parseInt(context.params.id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json(
@@ -53,6 +46,31 @@ export async function PUT(
         },
       });
 
+      const wordIdsToKeep = words.map((w: any) => w.id).filter(Boolean);
+
+      const wordsToDelete = await prisma.word.findMany({
+        where: {
+          kanjiId: id,
+          id: { notIn: wordIdsToKeep },
+        },
+        include: {
+          sentences: true,
+        },
+      });
+
+      for (const word of wordsToDelete) {
+        await prisma.sentence.deleteMany({
+          where: { wordId: word.id },
+        });
+      }
+
+      await prisma.word.deleteMany({
+        where: {
+          kanjiId: id,
+          id: { notIn: wordIdsToKeep },
+        },
+      });
+
       for (const word of words) {
         let updatedWord;
         if (word.id) {
@@ -79,11 +97,20 @@ export async function PUT(
           });
         }
 
-        const updatedSentenceIds = [];
+        const sentenceIdsToKeep = word.sentences
+          .map((s: any) => s.id)
+          .filter(Boolean);
+
+        await prisma.sentence.deleteMany({
+          where: {
+            wordId: updatedWord.id,
+            id: { notIn: sentenceIdsToKeep },
+          },
+        });
+
         for (const sentence of word.sentences) {
-          let updatedSentence;
           if (sentence.id) {
-            updatedSentence = await prisma.sentence.update({
+            await prisma.sentence.update({
               where: { id: sentence.id },
               data: {
                 sentence: sentence.sentence,
@@ -93,7 +120,7 @@ export async function PUT(
               },
             });
           } else {
-            updatedSentence = await prisma.sentence.create({
+            await prisma.sentence.create({
               data: {
                 sentence: sentence.sentence,
                 furigana: sentence.furigana,
@@ -103,23 +130,8 @@ export async function PUT(
               },
             });
           }
-          updatedSentenceIds.push(updatedSentence.id);
         }
-
-        await prisma.sentence.deleteMany({
-          where: {
-            wordId: updatedWord.id,
-            id: { notIn: updatedSentenceIds },
-          },
-        });
       }
-
-      await prisma.word.deleteMany({
-        where: {
-          kanjiId: id,
-          id: { notIn: words.map((w) => w.id).filter(Boolean) },
-        },
-      });
 
       return prisma.kanji.findUnique({
         where: { id },
@@ -137,7 +149,6 @@ export async function PUT(
       return NextResponse.json({ error: 'Kanji not found' }, { status: 404 });
     }
 
-    // Parse JSON strings back to arrays
     const parsedKanji = {
       ...updatedKanji,
       on: JSON.parse(updatedKanji.on as string),
@@ -158,16 +169,9 @@ export async function PUT(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  if (!params.id) {
-    return NextResponse.json(
-      { error: 'Missing id parameter' },
-      { status: 400 }
-    );
-  }
-
-  const id = parseInt(params.id, 10);
+  const id = parseInt(context.params.id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json(
@@ -192,7 +196,6 @@ export async function GET(
       return NextResponse.json({ error: 'Kanji not found' }, { status: 404 });
     }
 
-    // Parse JSON strings back to arrays
     const parsedKanji = {
       ...kanji,
       on: JSON.parse(kanji.on as string),
