@@ -157,7 +157,7 @@ export default function KanjiDetail() {
               defaultValue={kanji.words[0]?.id.toString()}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+              <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
                 {kanji.words.map((word) => (
                   <TabsTrigger
                     key={word.id}
@@ -216,10 +216,10 @@ function WordCard({
 }) {
   const [showFurigana, setShowFurigana] = useState(false);
 
-  const renderFurigana = (furigana: string, word: string) => {
+  const renderFurigana = useMemo(() => {
     // this was the source of the problems
     // thanks to: https://gist.github.com/ryanmcgrath/982242
-    const kanjiRegex = /(.*?)([\u4E00-\u9FAF])\((.*?)\)/g;
+    const kanjiRegex = /(.*?)([\u4E00-\u9FAF]+)\((.*?)\)/g;
     const result = [];
     let lastIndex = 0;
     let match;
@@ -253,10 +253,10 @@ function WordCard({
     }
 
     return result;
-  };
+  }, [furigana, word]);
 
   const renderSentence = useMemo(() => {
-    const kanjiRegex = /([\u4E00-\u9FAF])/g;
+    const kanjiRegex = /([\u4E00-\u9FAF]+)/g;
     const result = [];
     let lastIndex = 0;
     let match;
@@ -318,7 +318,7 @@ function WordCard({
           <div className="bg-white p-3 rounded-md">
             <div className="flex justify-between items-start">
               <p className="text-lg mb-1 leading-loose flex-grow">
-                {showFurigana ? renderFurigana(furigana, word) : renderSentence}
+                {showFurigana ? renderFurigana : renderSentence}
               </p>
               <Button
                 variant="ghost"
