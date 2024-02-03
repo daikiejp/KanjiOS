@@ -1,43 +1,84 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function POST(request: Request) {
-  const data = await request.json();
-
+export async function POST(request: NextRequest) {
   try {
-    const kanji = await prisma.kanji.create({
+    const body = await request.json();
+
+    const {
+      kanji,
+      strokes,
+      reading,
+      kanji_en,
+      kanji_es,
+      on,
+      kun,
+      jlpt,
+      words,
+    } = body;
+
+    if (
+      !kanji ||
+      !reading ||
+      !kanji_en ||
+      !kanji_es ||
+      !on ||
+      !kun ||
+      !words ||
+      !Array.isArray(words)
+    ) {
+      return NextResponse.json(
+        { error: 'Missing required fields or invalid data structure' },
+        { status: 400 }
+      );
+    }
+
+    const newKanji = await prisma.kanji.create({
       data: {
-        kanji: data.kanji,
-        strokes: data.strokes,
-        reading: data.reading,
-        kanji_en: data.kanji_en,
-        kanji_es: data.kanji_es,
-        on: JSON.stringify(data.on),
-        kun: JSON.stringify(data.kun),
-        jlpt: data.jlpt,
+        kanji,
+        strokes: strokes || 1,
+        reading,
+        kanji_en,
+        kanji_es,
+        on: JSON.stringify(on),
+        kun: JSON.stringify(kun),
+        jlpt: jlpt || 5,
         words: {
-          create: data.words.map((word: any) => ({
-            word_en: word.word_en,
-            word_es: word.word_es,
-            reading: word.reading,
-            kanji: word.kanji,
-            jlpt: word.jlpt,
-            sentence: word.sentence,
-            furigana: word.furigana,
-            sentence_es: word.sentence_es,
-            sentence_en: word.sentence_en,
+          create: words.map((word: any) => ({
+            word_en: word.word_en || '',
+            word_es: word.word_es || '',
+            reading: word.reading || '',
+            kanji: word.kanji || '',
+            jlpt: word.jlpt || 5,
+            sentences: {
+              create: (word.sentences || []).map((sentence: any) => ({
+                sentence: sentence.sentence || '',
+                furigana: sentence.furigana || '',
+                sentence_es: sentence.sentence_es || '',
+                sentence_en: sentence.sentence_en || '',
+              })),
+            },
           })),
+        },
+      },
+      include: {
+        words: {
+          include: {
+            sentences: true,
+          },
         },
       },
     });
 
-    return NextResponse.json(kanji);
+    return NextResponse.json(newKanji, { status: 201 });
   } catch (error) {
-    console.error('Error creating kanji:', error);
+    console.error('Error adding kanji:', error);
     return NextResponse.json(
-      { error: 'Error creating kanji' },
+      { error: 'Failed to add kanji', details: (error as Error).message },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

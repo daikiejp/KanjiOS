@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 async function cleanDatabase() {
   try {
+    await prisma.sentence.deleteMany({});
+    console.log('All sentences have been removed');
+
     await prisma.word.deleteMany({});
     console.log('All words have been removed');
 

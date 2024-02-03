@@ -10,6 +10,24 @@ import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
+interface Sentence {
+  id: number;
+  sentence: string;
+  furigana: string;
+  sentence_es: string;
+  sentence_en: string;
+}
+
+interface Word {
+  id: number;
+  word_en: string;
+  word_es: string;
+  reading: string;
+  kanji: string;
+  jlpt: number;
+  sentences: Sentence[];
+}
+
 interface Kanji {
   id: number;
   kanji: string;
@@ -21,19 +39,6 @@ interface Kanji {
   on: string[];
   kun: string[];
   words: Word[];
-}
-
-interface Word {
-  id: number;
-  word_en: string;
-  word_es: string;
-  reading: string;
-  kanji: string;
-  jlpt: number;
-  sentence: string;
-  furigana: string;
-  sentence_es: string;
-  sentence_en: string;
 }
 
 export default function KanjiDetail() {
@@ -190,10 +195,7 @@ export default function KanjiDetail() {
                       englishMeaning={word.word_en}
                       spanishMeaning={word.word_es}
                       jlpt={word.jlpt}
-                      furigana={word.furigana}
-                      sentence={word.sentence}
-                      englishSentence={word.sentence_en}
-                      spanishSentence={word.sentence_es}
+                      sentences={word.sentences}
                     />
                   </TabsContent>
                 ))}
@@ -212,33 +214,28 @@ function WordCard({
   englishMeaning,
   spanishMeaning,
   jlpt,
-  furigana,
-  sentence,
-  englishSentence,
-  spanishSentence,
+  sentences,
 }: {
   word: string;
   reading: string;
   englishMeaning: string;
   spanishMeaning: string;
   jlpt: number;
-  furigana: string;
-  sentence: string;
-  englishSentence: string;
-  spanishSentence: string;
+  sentences: Sentence[];
 }) {
   const [showFurigana, setShowFurigana] = useState(false);
+  const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
 
   const renderFurigana = useMemo(() => {
-    // this was the source of the problems
-    // thanks to: https://gist.github.com/ryanmcgrath/982242
+    const currentSentence = sentences[currentSentenceIndex];
+    if (!currentSentence) return null;
+
     const kanjiRegex = /(.*?)([\u4E00-\u9FAF]+)\((.*?)\)/g;
     const result = [];
     let lastIndex = 0;
     let match;
 
-    while ((match = kanjiRegex.exec(furigana)) !== null) {
-      // hide 'fullmatch' regex for no warnings but let the space.
+    while ((match = kanjiRegex.exec(currentSentence.furigana)) !== null) {
       const [, textBefore, kanji, reading] = match;
 
       if (textBefore) {
@@ -261,24 +258,27 @@ function WordCard({
       lastIndex = kanjiRegex.lastIndex;
     }
 
-    if (lastIndex < furigana.length) {
-      result.push(furigana.slice(lastIndex));
+    if (lastIndex < currentSentence.furigana.length) {
+      result.push(currentSentence.furigana.slice(lastIndex));
     }
 
     return result;
-  }, [furigana, word]);
+  }, [sentences, currentSentenceIndex, word]);
 
   const renderSentence = useMemo(() => {
+    const currentSentence = sentences[currentSentenceIndex];
+    if (!currentSentence) return null;
+
     const kanjiRegex = /([\u4E00-\u9FAF]+)/g;
     const result = [];
     let lastIndex = 0;
     let match;
 
-    while ((match = kanjiRegex.exec(sentence)) !== null) {
+    while ((match = kanjiRegex.exec(currentSentence.sentence)) !== null) {
       const [kanji] = match;
 
       if (lastIndex < match.index) {
-        result.push(sentence.slice(lastIndex, match.index));
+        result.push(currentSentence.sentence.slice(lastIndex, match.index));
       }
 
       result.push(
@@ -297,12 +297,12 @@ function WordCard({
       lastIndex = kanjiRegex.lastIndex;
     }
 
-    if (lastIndex < sentence.length) {
-      result.push(sentence.slice(lastIndex));
+    if (lastIndex < currentSentence.sentence.length) {
+      result.push(currentSentence.sentence.slice(lastIndex));
     }
 
     return result;
-  }, [sentence, word]);
+  }, [sentences, currentSentenceIndex, word]);
 
   return (
     <Card className="bg-gray-50">
@@ -338,7 +338,7 @@ function WordCard({
                 size="icon"
                 onClick={() => setShowFurigana(!showFurigana)}
                 className="ml-2"
-                disabled={!furigana}
+                disabled={!sentences[currentSentenceIndex]?.furigana}
               >
                 {showFurigana ? (
                   <EyeOff className="h-4 w-4" />
@@ -353,16 +353,44 @@ function WordCard({
               <Badge variant="outline" className="mb-1">
                 EN
               </Badge>
-              <p className="text-sm text-gray-600">{englishSentence}</p>
+              <p className="text-sm text-gray-600">
+                {sentences[currentSentenceIndex]?.sentence_en}
+              </p>
             </div>
             <div>
               <Badge variant="outline" className="mb-1">
                 ES
               </Badge>
-              <p className="text-sm text-gray-600">{spanishSentence}</p>
+              <p className="text-sm text-gray-600">
+                {sentences[currentSentenceIndex]?.sentence_es}
+              </p>
             </div>
           </div>
         </div>
+        {sentences.length > 1 && (
+          <div className="mt-4 flex justify-between">
+            <Button
+              onClick={() =>
+                setCurrentSentenceIndex((prev) =>
+                  prev > 0 ? prev - 1 : sentences.length - 1
+                )
+              }
+              variant="outline"
+            >
+              Previous Sentence
+            </Button>
+            <Button
+              onClick={() =>
+                setCurrentSentenceIndex((prev) =>
+                  prev < sentences.length - 1 ? prev + 1 : 0
+                )
+              }
+              variant="outline"
+            >
+              Next Sentence
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

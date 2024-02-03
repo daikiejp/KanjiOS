@@ -33,10 +33,17 @@ model Word {
   reading     String
   kanji       String
   jlpt        Int
-  sentence    String
-  furigana    String
-  sentence_es String
-  sentence_en String
   kanjiId     Int
   Kanji       Kanji  @relation(fields: [kanjiId], references: [id])
+  sentences    Sentence[]
+}
+
+model Sentence {
+  id         Int    @id @default(autoincrement())
+  sentence   String
+  furigana   String
+  sentence_es String
+  sentence_en String
+  word       Word   @relation(fields: [wordId], references: [id])
+  wordId     Int
 }
