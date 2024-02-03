@@ -6,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
@@ -281,7 +287,7 @@ function WordCard({
       if (lastIndex < match.index) {
         result.push(currentSentence.sentence.slice(lastIndex, match.index));
       }
-      console.log(kanji, word);
+
       result.push(
         kanji.includes(word) ? (
           <span
@@ -334,19 +340,28 @@ function WordCard({
               <p className="text-lg mb-1 leading-loose flex-grow">
                 {showFurigana ? renderFurigana : renderSentence}
               </p>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowFurigana(!showFurigana)}
-                className="ml-2"
-                disabled={!sentences[currentSentenceIndex]?.furigana}
-              >
-                {showFurigana ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowFurigana(!showFurigana)}
+                      className="ml-2"
+                      disabled={!sentences[currentSentenceIndex]?.furigana}
+                    >
+                      {showFurigana ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{showFurigana ? 'Hide furigana' : 'Show furigana'}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <CopySentence
                 sentence={sentences[currentSentenceIndex]?.sentence}
               />

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts",
+    "export": "tsx prisma/export.ts",
     "clean": "tsx prisma/clean.ts"
   },
   "dependencies": {
