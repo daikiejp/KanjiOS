@@ -8,7 +8,7 @@ const colors = {
   N5: '#32CD32',
 };
 
-function jlpt({ jlpt }: { jlpt: 1 | 2 | 3 | 4 | 5 }) {
+function Jlpt({ jlpt }: { jlpt: 1 | 2 | 3 | 4 | 5 }) {
   const colorKey = `N${jlpt}` as keyof typeof colors;
   const color = colors[colorKey] || '#171717';
   return (
@@ -21,4 +21,4 @@ function jlpt({ jlpt }: { jlpt: 1 | 2 | 3 | 4 | 5 }) {
   );
 }
 
-export default jlpt;
+export default Jlpt;
