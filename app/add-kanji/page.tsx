@@ -150,7 +150,7 @@ export default function AddKanji() {
         description: 'Kanji added successfully',
       });
 
-      router.push(`/kanjis/${result.id}`);
+      router.push(`/kanji/${result.id}`);
     } catch (error) {
       console.error('Error adding kanji:', error);
       toast({

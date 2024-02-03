@@ -16,7 +16,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'KanjiOS',
-  description: 'Manage and learn more than 2136 Kanjis',
+  description: 'Visualizate, edit and manage and learn more than 2136 Kanjis',
 };
 
 export default function RootLayout({

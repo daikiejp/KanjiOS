@@ -163,7 +163,7 @@ export default function EditKanji() {
         description: 'Kanji updated successfully',
       });
 
-      router.push(`/kanjis/${id}`);
+      router.push(`/kanji/${id}`);
     } catch (error) {
       console.error('Error updating kanji:', error);
       toast({

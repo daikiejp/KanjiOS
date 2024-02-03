@@ -73,7 +73,7 @@ export default function KanjiList() {
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {currentKanjis.map((kanji) => (
-          <Link href={`/kanjis/${kanji.id}`} key={kanji.id}>
+          <Link href={`/kanji/${kanji.id}`} key={kanji.id}>
             <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <CardHeader className="bg-[#FF7BAC] text-white cursor-pointer">
                 <CardTitle className="text-center">

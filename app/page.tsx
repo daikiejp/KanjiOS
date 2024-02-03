@@ -31,7 +31,7 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-        <Link href="/kanjis">
+        <Link href="/kanji">
           <Button className="text-2xl px-8 py-6 bg-[#FF7BAC] hover:bg-[#FF5A93] w-full sm:w-auto">
             List Kanjis
           </Button>

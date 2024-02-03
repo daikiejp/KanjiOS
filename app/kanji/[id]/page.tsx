@@ -134,7 +134,7 @@ export default function KanjiCard() {
                 <h2 className="text-2xl font-semibold">Details</h2>
                 <Link
                   className="visible md:invisible"
-                  href={`/kanjis/${kanji.id}/edit`}
+                  href={`/kanji/${kanji.id}/edit`}
                   passHref
                 >
                   <Button variant="outline">Edit Kanji</Button>
@@ -154,7 +154,7 @@ export default function KanjiCard() {
                 <h2 className="text-2xl font-semibold">Details</h2>
                 <Link
                   className="invisible md:visible"
-                  href={`/kanjis/${kanji.id}/edit`}
+                  href={`/kanji/${kanji.id}/edit`}
                   passHref
                 >
                   <Button variant="outline">Edit Kanji</Button>
