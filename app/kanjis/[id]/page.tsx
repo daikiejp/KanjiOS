@@ -245,7 +245,7 @@ function WordCard({
 
       result.push(
         <ruby key={match.index}>
-          {kanji === word ? (
+          {kanji.includes(word) ? (
             <span className="font-bold text-[#FF7BAC] leading-[2.5rem] h-[2.7rem]">
               {kanji}
             </span>
@@ -281,9 +281,9 @@ function WordCard({
       if (lastIndex < match.index) {
         result.push(currentSentence.sentence.slice(lastIndex, match.index));
       }
-
+      console.log(kanji, word);
       result.push(
-        kanji === word ? (
+        kanji.includes(word) ? (
           <span
             key={`kanji-${match.index}`}
             className="font-bold text-[#FF7BAC] leading-[2.5rem] h-[2.7rem]"
