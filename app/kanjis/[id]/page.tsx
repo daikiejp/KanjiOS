@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import CopySentence from '@/utils/copy';
 
 interface Sentence {
   id: number;
@@ -346,6 +347,9 @@ function WordCard({
                   <Eye className="h-4 w-4" />
                 )}
               </Button>
+              <CopySentence
+                sentence={sentences[currentSentenceIndex]?.sentence}
+              />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
