@@ -3,43 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { KanjiCardProps } from '@/types/kanjiTypes';
 import Link from 'next/link';
 import WordCard from './WordCard';
 
-interface Kanji {
-  kanji: {
-    id: number;
-    kanji: string;
-    reading: string;
-    kanji_en: string;
-    kanji_es: string;
-    jlpt: number;
-    strokes: number;
-    on: string[];
-    kun: string[];
-    words: Word[];
-  };
-}
-
-interface Word {
-  id: number;
-  word_en: string;
-  word_es: string;
-  reading: string;
-  kanji: string;
-  jlpt: number;
-  sentences: Sentence[];
-}
-
-interface Sentence {
-  id: number;
-  sentence: string;
-  furigana: string;
-  sentence_es: string;
-  sentence_en: string;
-}
-
-export default function KanjiCard({ kanji }: Kanji) {
+export default function KanjiCard({ kanji }: KanjiCardProps) {
   return (
     <div className="container mx-auto p-4 font-sans">
       <Card className="bg-white shadow-lg max-w-4xl mx-auto">

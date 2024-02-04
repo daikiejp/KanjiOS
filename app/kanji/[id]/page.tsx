@@ -3,40 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import KanjiCard from '@/components/kanjios/KanjiCard';
-
-interface Sentence {
-  id: number;
-  sentence: string;
-  furigana: string;
-  sentence_es: string;
-  sentence_en: string;
-}
-
-interface Word {
-  id: number;
-  word_en: string;
-  word_es: string;
-  reading: string;
-  kanji: string;
-  jlpt: number;
-  sentences: Sentence[];
-}
-
-interface Kanji {
-  id: number;
-  kanji: string;
-  reading: string;
-  kanji_en: string;
-  kanji_es: string;
-  jlpt: number;
-  strokes: number;
-  on: string[];
-  kun: string[];
-  words: Word[];
-}
+import { KanjiTypes } from '@/types/kanjiTypes';
 
 export default function KanjiDetail() {
-  const [kanji, setKanji] = useState<Kanji | null>(null);
+  const [kanji, setKanji] = useState<KanjiTypes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
