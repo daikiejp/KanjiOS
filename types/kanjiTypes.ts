@@ -32,3 +32,18 @@ export interface KanjiTypes {
 export interface KanjiCardProps {
   kanji: KanjiTypes;
 }
+
+export interface KanjiListProps {
+  kanjisPerPage: number;
+}
+
+export interface SearchInputProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (pageNumber: number) => void;
+}

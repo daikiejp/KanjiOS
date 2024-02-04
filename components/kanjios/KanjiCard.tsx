@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KanjiCardProps } from '@/types/kanjiTypes';
 import Link from 'next/link';
-import WordCard from './WordCard';
+import WordCard from '@/components/kanjios/WordCard';
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
   return (
