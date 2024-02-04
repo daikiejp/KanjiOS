@@ -70,21 +70,21 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 <div>
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {/* {kanji.on.map((reading, index) => (
+                    {kanji.on.map((reading, index) => (
                       <Badge key={index} variant="secondary">
                         {reading}
                       </Badge>
-                    ))} */}
+                    ))}
                   </div>
                 </div>
                 <div>
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {/* {kanji.kun.map((reading, index) => (
+                    {kanji.kun.map((reading, index) => (
                       <Badge key={index} variant="outline">
                         {reading}
                       </Badge>
-                    ))} */}
+                    ))}
                   </div>
                 </div>
               </div>
