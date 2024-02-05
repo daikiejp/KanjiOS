@@ -685,10 +685,16 @@ export default function EditKanji() {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                <TabsTrigger value="readings">Readings</TabsTrigger>
-                <TabsTrigger value="words">Words & Sentences</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 h-auto">
+                <TabsTrigger className="px-4 py-3 text-lg" value="basic">
+                  Basic Info
+                </TabsTrigger>
+                <TabsTrigger className="px-4 py-3 text-lg" value="readings">
+                  Readings
+                </TabsTrigger>
+                <TabsTrigger className="px-4 py-3 text-lg" value="words">
+                  Words & Sentences
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="basic">
                 <BasicInfo control={control} errors={errors} />
