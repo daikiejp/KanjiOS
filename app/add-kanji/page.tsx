@@ -2,13 +2,20 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray, Controller, Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Plus } from 'lucide-react';
 
@@ -43,6 +50,491 @@ const kanjiSchema = z.object({
 });
 
 type KanjiFormData = z.infer<typeof kanjiSchema>;
+
+const BasicInfo: React.FC<{
+  control: Control<KanjiFormData>;
+  errors: any;
+}> = ({ control, errors }) => (
+  <div className="space-y-4 mt-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="kanji" className="text-lg">
+          Kanji
+        </Label>
+        <Controller
+          name="kanji"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="kanji"
+              className="text-4xl h-20 text-center"
+            />
+          )}
+        />
+        {errors.kanji && (
+          <p className="text-red-500 text-sm mt-1">{errors.kanji.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="strokes" className="text-lg">
+          Strokes
+        </Label>
+        <Controller
+          name="strokes"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="strokes"
+              type="number"
+              min="1"
+              onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+              className="text-2xl h-20 text-center"
+            />
+          )}
+        />
+        {errors.strokes && (
+          <p className="text-red-500 text-sm mt-1">{errors.strokes.message}</p>
+        )}
+      </div>
+    </div>
+    <div>
+      <Label htmlFor="reading" className="text-lg">
+        Reading
+      </Label>
+      <Controller
+        name="reading"
+        control={control}
+        render={({ field }) => (
+          <Input {...field} id="reading" className="text-xl" />
+        )}
+      />
+      {errors.reading && (
+        <p className="text-red-500 text-sm mt-1">{errors.reading.message}</p>
+      )}
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="kanji_en" className="text-lg">
+          English Meaning
+        </Label>
+        <Controller
+          name="kanji_en"
+          control={control}
+          render={({ field }) => <Input {...field} id="kanji_en" />}
+        />
+        {errors.kanji_en && (
+          <p className="text-red-500 text-sm mt-1">{errors.kanji_en.message}</p>
+        )}
+      </div>
+      <div>
+        <Label htmlFor="kanji_es" className="text-lg">
+          Spanish Meaning
+        </Label>
+        <Controller
+          name="kanji_es"
+          control={control}
+          render={({ field }) => <Input {...field} id="kanji_es" />}
+        />
+        {errors.kanji_es && (
+          <p className="text-red-500 text-sm mt-1">{errors.kanji_es.message}</p>
+        )}
+      </div>
+    </div>
+    <div>
+      <Label htmlFor="jlpt" className="text-lg">
+        JLPT Level
+      </Label>
+      <Controller
+        name="jlpt"
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            id="jlpt"
+            type="number"
+            min="1"
+            max="5"
+            onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+            className="text-2xl h-12 text-center"
+          />
+        )}
+      />
+      {errors.jlpt && (
+        <p className="text-red-500 text-sm mt-1">{errors.jlpt.message}</p>
+      )}
+    </div>
+  </div>
+);
+
+const Readings: React.FC<{
+  control: Control<KanjiFormData>;
+  onFields: any[];
+  kunFields: any[];
+  appendOn: () => void;
+  appendKun: () => void;
+  removeOn: (index: number) => void;
+  removeKun: (index: number) => void;
+}> = ({
+  control,
+  onFields,
+  kunFields,
+  appendOn,
+  appendKun,
+  removeOn,
+  removeKun,
+}) => (
+  <div className="space-y-4 mt-4">
+    <div>
+      <Label className="text-lg">ON Readings</Label>
+      {onFields.map((field, index) => (
+        <div key={field.id} className="flex items-center space-x-2 mt-2">
+          <Controller
+            name={`on.${index}`}
+            control={control}
+            render={({ field }) => <Input {...field} className="flex-grow" />}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => removeOn(index)}
+            className="flex-shrink-0"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="sr-only">Remove ON reading</span>
+          </Button>
+        </div>
+      ))}
+      <Button
+        type="button"
+        onClick={appendOn}
+        className="mt-2 w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Add ON Reading
+      </Button>
+    </div>
+    <div>
+      <Label className="text-lg">KUN Readings</Label>
+      {kunFields.map((field, index) => (
+        <div key={field.id} className="flex items-center space-x-2 mt-2">
+          <Controller
+            name={`kun.${index}`}
+            control={control}
+            render={({ field }) => <Input {...field} className="flex-grow" />}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => removeKun(index)}
+            className="flex-shrink-0"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="sr-only">Remove KUN reading</span>
+          </Button>
+        </div>
+      ))}
+      <Button
+        type="button"
+        onClick={appendKun}
+        className="mt-2 w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Add KUN Reading
+      </Button>
+    </div>
+  </div>
+);
+
+const Sentence: React.FC<{
+  wordIndex: number;
+  sentenceIndex: number;
+  control: Control<KanjiFormData>;
+  onRemove: () => void;
+}> = ({ wordIndex, sentenceIndex, control, onRemove }) => (
+  <Accordion type="single" collapsible className="bg-gray-50 rounded-lg">
+    <AccordionItem value={`sentence-${sentenceIndex}`}>
+      <AccordionTrigger className="px-4 py-2 hover:bg-gray-100">
+        <div className="flex justify-between w-full">
+          <span className="font-medium">Sentence {sentenceIndex + 1}</span>
+          <Controller
+            name={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
+            control={control}
+            render={({ field }) => (
+              <span className="text-sm text-gray-500">
+                {field.value.slice(0, 30)}...
+              </span>
+            )}
+          />
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="px-4 py-2">
+        <div className="grid grid-cols-1 gap-3">
+          <div>
+            <Label
+              htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
+            >
+              Japanese Sentence
+            </Label>
+            <Controller
+              name={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
+                  className="mt-1"
+                />
+              )}
+            />
+          </div>
+          <div>
+            <Label
+              htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.furigana`}
+            >
+              Furigana
+            </Label>
+            <Controller
+              name={`words.${wordIndex}.sentences.${sentenceIndex}.furigana`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id={`words.${wordIndex}.sentences.${sentenceIndex}.furigana`}
+                  className="mt-1"
+                />
+              )}
+            />
+          </div>
+          <div>
+            <Label
+              htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_es`}
+            >
+              Spanish Sentence
+            </Label>
+            <Controller
+              name={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_es`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_es`}
+                  className="mt-1"
+                />
+              )}
+            />
+          </div>
+          <div>
+            <Label
+              htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_en`}
+            >
+              English Sentence
+            </Label>
+            <Controller
+              name={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_en`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_en`}
+                  className="mt-1"
+                />
+              )}
+            />
+          </div>
+        </div>
+        <Button
+          type="button"
+          variant="destructive"
+          onClick={onRemove}
+          className="mt-3"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Remove Sentence
+        </Button>
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+);
+
+const Word: React.FC<{
+  wordIndex: number;
+  control: Control<KanjiFormData>;
+  onRemove: () => void;
+}> = ({ wordIndex, control, onRemove }) => {
+  const {
+    fields: sentenceFields,
+    append: appendSentence,
+    remove: removeSentence,
+  } = useFieldArray({
+    control,
+    name: `words.${wordIndex}.sentences` as const,
+  });
+
+  return (
+    <AccordionItem value={`word-${wordIndex}`}>
+      <AccordionTrigger className="text-lg font-medium">
+        <div className="flex items-center justify-between w-full">
+          <span>Word {wordIndex + 1}</span>
+          <Controller
+            name={`words.${wordIndex}.kanji`}
+            control={control}
+            render={({ field }) => (
+              <span className="text-2xl font-bold">{field.value}</span>
+            )}
+          />
+        </div>
+      </AccordionTrigger>
+      <AccordionContent>
+        <Card className="p-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor={`words.${wordIndex}.word_en`}>English Word</Label>
+              <Controller
+                name={`words.${wordIndex}.word_en`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.word_en`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.word_es`}>Spanish Word</Label>
+              <Controller
+                name={`words.${wordIndex}.word_es`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.word_es`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.reading`}>Reading</Label>
+              <Controller
+                name={`words.${wordIndex}.reading`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.reading`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.kanji`}>Kanji</Label>
+              <Controller
+                name={`words.${wordIndex}.kanji`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.kanji`} />
+                )}
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <Label htmlFor={`words.${wordIndex}.jlpt`}>JLPT Level</Label>
+            <Controller
+              name={`words.${wordIndex}.jlpt`}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id={`words.${wordIndex}.jlpt`}
+                  type="number"
+                  min="1"
+                  max="5"
+                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  className="w-20 text-center"
+                />
+              )}
+            />
+          </div>
+          <div className="mt-4">
+            <Label className="text-lg font-semibold">Sentences</Label>
+            <div className="space-y-4">
+              {sentenceFields.map((sentenceField, sentenceIndex) => (
+                <Sentence
+                  key={sentenceField.id}
+                  wordIndex={wordIndex}
+                  sentenceIndex={sentenceIndex}
+                  control={control}
+                  onRemove={() => removeSentence(sentenceIndex)}
+                />
+              ))}
+              <Button
+                type="button"
+                onClick={() =>
+                  appendSentence({
+                    sentence: '',
+                    furigana: '',
+                    sentence_es: '',
+                    sentence_en: '',
+                  })
+                }
+                className="w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Sentence
+              </Button>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={onRemove}
+            className="mt-4"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Remove Word
+          </Button>
+        </Card>
+      </AccordionContent>
+    </AccordionItem>
+  );
+};
+
+const WordsAndSentences: React.FC<{
+  control: Control<KanjiFormData>;
+  wordFields: any[];
+  appendWord: () => void;
+  removeWord: (index: number) => void;
+}> = ({ control, wordFields, appendWord, removeWord }) => (
+  <div className="space-y-4 mt-4">
+    <Accordion type="single" collapsible className="w-full">
+      {wordFields.map((wordField, wordIndex) => (
+        <Word
+          key={wordField.id}
+          wordIndex={wordIndex}
+          control={control}
+          onRemove={() => removeWord(wordIndex)}
+        />
+      ))}
+    </Accordion>
+    <Button
+      type="button"
+      onClick={() =>
+        appendWord({
+          word_en: '',
+          word_es: '',
+          reading: '',
+          kanji: '',
+          jlpt: 5,
+          sentences: [
+            {
+              sentence: '',
+              furigana: '',
+              sentence_es: '',
+              sentence_en: '',
+            },
+          ],
+        })
+      }
+      className="w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
+    >
+      <Plus className="w-4 h-4 mr-2" />
+      Add Word
+    </Button>
+  </div>
+);
 
 export default function AddKanji() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -167,404 +659,48 @@ export default function AddKanji() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
+    <div className="container mx-auto p-4 max-w-4xl">
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center text-[#FF7BAC]">
+          <CardTitle className="text-4xl font-bold text-center text-[#FF7BAC]">
             Add New Kanji
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="kanji">Kanji</Label>
-                <Controller
-                  name="kanji"
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                <TabsTrigger value="readings">Readings</TabsTrigger>
+                <TabsTrigger value="words">Words & Sentences</TabsTrigger>
+              </TabsList>
+              <TabsContent value="basic">
+                <BasicInfo control={control} errors={errors} />
+              </TabsContent>
+              <TabsContent value="readings">
+                <Readings
                   control={control}
-                  render={({ field }) => (
-                    <Input {...field} id="kanji" className="text-4xl" />
-                  )}
+                  onFields={onFields}
+                  kunFields={kunFields}
+                  appendOn={() => appendOn('')}
+                  appendKun={() => appendKun('')}
+                  removeOn={removeOn}
+                  removeKun={removeKun}
                 />
-                {errors.kanji && (
-                  <p className="text-red-500">{errors.kanji.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="strokes">Number of Strokes</Label>
-                <Controller
-                  name="strokes"
+              </TabsContent>
+              <TabsContent value="words">
+                <WordsAndSentences
                   control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="strokes"
-                      type="number"
-                      min="1"
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10))
-                      }
-                    />
-                  )}
+                  wordFields={wordFields}
+                  appendWord={appendWord}
+                  removeWord={removeWord}
                 />
-                {errors.strokes && (
-                  <p className="text-red-500">{errors.strokes.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="reading">Reading</Label>
-                <Controller
-                  name="reading"
-                  control={control}
-                  render={({ field }) => <Input {...field} id="reading" />}
-                />
-                {errors.reading && (
-                  <p className="text-red-500">{errors.reading.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="kanji_en">English Meaning</Label>
-                <Controller
-                  name="kanji_en"
-                  control={control}
-                  render={({ field }) => <Input {...field} id="kanji_en" />}
-                />
-                {errors.kanji_en && (
-                  <p className="text-red-500">{errors.kanji_en.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="kanji_es">Spanish Meaning</Label>
-                <Controller
-                  name="kanji_es"
-                  control={control}
-                  render={({ field }) => <Input {...field} id="kanji_es" />}
-                />
-                {errors.kanji_es && (
-                  <p className="text-red-500">{errors.kanji_es.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label>ON Readings</Label>
-                {onFields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-center space-x-2 mt-2"
-                  >
-                    <Controller
-                      name={`on.${index}`}
-                      control={control}
-                      render={({ field }) => <Input {...field} />}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => removeOn(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">Remove ON reading</span>
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => appendOn('')}
-                  className="mt-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add ON Reading
-                </Button>
-              </div>
-
-              <div>
-                <Label>KUN Readings</Label>
-                {kunFields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-center space-x-2 mt-2"
-                  >
-                    <Controller
-                      name={`kun.${index}`}
-                      control={control}
-                      render={({ field }) => <Input {...field} />}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => removeKun(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">Remove KUN reading</span>
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() => appendKun('')}
-                  className="mt-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add KUN Reading
-                </Button>
-              </div>
-
-              <div>
-                <Label htmlFor="jlpt">JLPT Level</Label>
-                <Controller
-                  name="jlpt"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="jlpt"
-                      type="number"
-                      min="1"
-                      max="5"
-                      onChange={(e) =>
-                        field.onChange(parseInt(e.target.value, 10))
-                      }
-                    />
-                  )}
-                />
-                {errors.jlpt && (
-                  <p className="text-red-500">{errors.jlpt.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label>Words</Label>
-                {wordFields.map((wordField, wordIndex) => (
-                  <div
-                    key={wordField.id}
-                    className="space-y-4 mb-8 p-4 border rounded"
-                  >
-                    <div>
-                      <Label htmlFor={`words.${wordIndex}.word_en`}>
-                        English Word
-                      </Label>
-                      <Controller
-                        name={`words.${wordIndex}.word_en`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} id={`words.${wordIndex}.word_en`} />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`words.${wordIndex}.word_es`}>
-                        Spanish Word
-                      </Label>
-                      <Controller
-                        name={`words.${wordIndex}.word_es`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} id={`words.${wordIndex}.word_es`} />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`words.${wordIndex}.reading`}>
-                        Reading
-                      </Label>
-                      <Controller
-                        name={`words.${wordIndex}.reading`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} id={`words.${wordIndex}.reading`} />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`words.${wordIndex}.kanji`}>Kanji</Label>
-                      <Controller
-                        name={`words.${wordIndex}.kanji`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} id={`words.${wordIndex}.kanji`} />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor={`words.${wordIndex}.jlpt`}>
-                        JLPT Level
-                      </Label>
-                      <Controller
-                        name={`words.${wordIndex}.jlpt`}
-                        control={control}
-                        render={({ field }) => (
-                          <Input
-                            {...field}
-                            id={`words.${wordIndex}.jlpt`}
-                            type="number"
-                            min="1"
-                            max="5"
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value, 10))
-                            }
-                          />
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <Label>Sentences</Label>
-                      <Controller
-                        name={`words.${wordIndex}.sentences`}
-                        control={control}
-                        render={({ field }) => (
-                          <div>
-                            {field.value.map((sentence, sentenceIndex) => (
-                              <div
-                                key={sentenceIndex}
-                                className="space-y-2 mb-4 p-2 border rounded"
-                              >
-                                <div>
-                                  <Label
-                                    htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
-                                  >
-                                    Japanese Sentence
-                                  </Label>
-                                  <Input
-                                    id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence`}
-                                    value={sentence.sentence}
-                                    onChange={(e) => {
-                                      const newSentences = [...field.value];
-                                      newSentences[sentenceIndex].sentence =
-                                        e.target.value;
-                                      field.onChange(newSentences);
-                                    }}
-                                  />
-                                </div>
-                                <div>
-                                  <Label
-                                    htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.furigana`}
-                                  >
-                                    Furigana
-                                  </Label>
-                                  <Input
-                                    id={`words.${wordIndex}.sentences.${sentenceIndex}.furigana`}
-                                    value={sentence.furigana}
-                                    onChange={(e) => {
-                                      const newSentences = [...field.value];
-                                      newSentences[sentenceIndex].furigana =
-                                        e.target.value;
-                                      field.onChange(newSentences);
-                                    }}
-                                  />
-                                </div>
-                                <div>
-                                  <Label
-                                    htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_es`}
-                                  >
-                                    Spanish Sentence
-                                  </Label>
-                                  <Input
-                                    id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_es`}
-                                    value={sentence.sentence_es}
-                                    onChange={(e) => {
-                                      const newSentences = [...field.value];
-                                      newSentences[sentenceIndex].sentence_es =
-                                        e.target.value;
-                                      field.onChange(newSentences);
-                                    }}
-                                  />
-                                </div>
-                                <div>
-                                  <Label
-                                    htmlFor={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_en`}
-                                  >
-                                    English Sentence
-                                  </Label>
-                                  <Input
-                                    id={`words.${wordIndex}.sentences.${sentenceIndex}.sentence_en`}
-                                    value={sentence.sentence_en}
-                                    onChange={(e) => {
-                                      const newSentences = [...field.value];
-                                      newSentences[sentenceIndex].sentence_en =
-                                        e.target.value;
-                                      field.onChange(newSentences);
-                                    }}
-                                  />
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="destructive"
-                                  onClick={() => {
-                                    const newSentences = [...field.value];
-                                    newSentences.splice(sentenceIndex, 1);
-                                    field.onChange(newSentences);
-                                  }}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                  Remove Sentence
-                                </Button>
-                              </div>
-                            ))}
-                            <Button
-                              type="button"
-                              onClick={() => {
-                                field.onChange([
-                                  ...field.value,
-                                  {
-                                    sentence: '',
-                                    furigana: '',
-                                    sentence_es: '',
-                                    sentence_en: '',
-                                  },
-                                ]);
-                              }}
-                            >
-                              <Plus className="w-4 h-4" />
-                              Add Sentence
-                            </Button>
-                          </div>
-                        )}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => removeWord(wordIndex)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Remove Word
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={() =>
-                    appendWord({
-                      word_en: '',
-                      word_es: '',
-                      reading: '',
-                      kanji: '',
-                      jlpt: 5,
-                      sentences: [
-                        {
-                          sentence: '',
-                          furigana: '',
-                          sentence_es: '',
-                          sentence_en: '',
-                        },
-                      ],
-                    })
-                  }
-                  className="mt-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Word
-                </Button>
-              </div>
-            </div>
+              </TabsContent>
+            </Tabs>
 
             <Button
               type="submit"
-              className="w-full bg-[#FF7BAC] hover:bg-[#FF5A93]"
+              className="w-full bg-[#FF7BAC] hover:bg-[#FF5A93] text-white text-lg py-6"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Adding...' : 'Add Kanji'}
