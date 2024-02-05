@@ -151,8 +151,8 @@ export async function PUT(
 
     const parsedKanji = {
       ...updatedKanji,
-      on: JSON.parse(updatedKanji.on as string),
-      kun: JSON.parse(updatedKanji.kun as string),
+      on: JSON.parse(updatedKanji.on),
+      kun: JSON.parse(updatedKanji.kun),
     };
 
     return NextResponse.json(parsedKanji);
@@ -198,8 +198,8 @@ export async function GET(
 
     const parsedKanji = {
       ...kanji,
-      on: JSON.parse(kanji.on as string),
-      kun: JSON.parse(kanji.kun as string),
+      on: JSON.parse(kanji.on),
+      kun: JSON.parse(kanji.kun),
     };
 
     return NextResponse.json(parsedKanji);

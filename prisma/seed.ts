@@ -54,8 +54,8 @@ async function processKanjiData(data) {
       reading: data.reading,
       kanji_en: data.kanji_en,
       kanji_es: data.kanji_es,
-      on: data.on,
-      kun: data.kun,
+      on: JSON.stringify(data.on),
+      kun: JSON.stringify(data.kun),
       jlpt: data.jlpt,
       words: {
         create: data.words.map((word) => ({
