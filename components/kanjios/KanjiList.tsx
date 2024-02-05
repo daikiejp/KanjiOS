@@ -7,6 +7,7 @@ import { Pagination } from '@/components/kanjios/Pagination';
 import { KanjiListProps, KanjiTypes } from '@/types/kanjiTypes';
 
 export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
+  const [isLoading, setIsLoading] = useState(true);
   const [kanjis, setKanjis] = useState<KanjiTypes[]>([]);
   const [filteredKanjis, setFilteredKanjis] = useState<KanjiTypes[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,6 +29,7 @@ export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
   }, [searchTerm, kanjis]);
 
   const fetchKanjis = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/kanji');
       if (!response.ok) {
@@ -38,8 +40,18 @@ export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
       setFilteredKanjis(data);
     } catch (error) {
       console.error('Error fetching kanjis:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#FF7BAC]"></div>
+      </div>
+    );
+  }
 
   const indexOfLastKanji = currentPage * kanjisPerPage;
   const indexOfFirstKanji = indexOfLastKanji - kanjisPerPage;
