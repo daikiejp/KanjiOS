@@ -185,7 +185,7 @@ const Readings: React.FC<{
   removeOn,
   removeKun,
 }) => (
-  <div className="space-y-4 mt-4">
+  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
     <div>
       <Label className="text-lg">ON Readings</Label>
       {onFields.map((field, index) => (
@@ -390,6 +390,26 @@ const Word: React.FC<{
         <Card className="p-4 mb-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              <Label htmlFor={`words.${wordIndex}.kanji`}>Kanji</Label>
+              <Controller
+                name={`words.${wordIndex}.kanji`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.kanji`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.reading`}>Reading</Label>
+              <Controller
+                name={`words.${wordIndex}.reading`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.reading`} />
+                )}
+              />
+            </div>
+            <div>
               <Label htmlFor={`words.${wordIndex}.word_en`}>English Word</Label>
               <Controller
                 name={`words.${wordIndex}.word_en`}
@@ -406,26 +426,6 @@ const Word: React.FC<{
                 control={control}
                 render={({ field }) => (
                   <Input {...field} id={`words.${wordIndex}.word_es`} />
-                )}
-              />
-            </div>
-            <div>
-              <Label htmlFor={`words.${wordIndex}.reading`}>Reading</Label>
-              <Controller
-                name={`words.${wordIndex}.reading`}
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} id={`words.${wordIndex}.reading`} />
-                )}
-              />
-            </div>
-            <div>
-              <Label htmlFor={`words.${wordIndex}.kanji`}>Kanji</Label>
-              <Controller
-                name={`words.${wordIndex}.kanji`}
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} id={`words.${wordIndex}.kanji`} />
                 )}
               />
             </div>

@@ -36,7 +36,7 @@ export default function Home() {
             List Kanjis
           </Button>
         </Link>
-        <Link href="/add-kanji">
+        <Link href="/kanji/add">
           <Button className="text-2xl px-8 py-6 bg-[#29ABE2] hover:bg-[#1A8AC7] w-full sm:w-auto">
             Add Kanji
           </Button>
