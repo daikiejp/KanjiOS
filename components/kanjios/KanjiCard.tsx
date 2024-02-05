@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KanjiCardProps } from '@/types/kanjiTypes';
 import Link from 'next/link';
 import WordCard from '@/components/kanjios/WordCard';
+import Jlpt from '@/components/kanjios/Jlpt';
+// import Animate from './Animate';
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
   return (
@@ -34,60 +36,70 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 md:p-8">
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <div className="flex justify-between items-center mb-2">
+          <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
+            <div className="flex justify-start">
+              <div className="flex flex-col items-start mb-2">
                 <h2 className="text-2xl font-semibold">Details</h2>
+                <div className="space-y-4">
+                  <p className="mt-4">
+                    <span className="font-medium">Strokes:</span>{' '}
+                    {kanji.strokes}
+                  </p>
+                  <span className="font-medium">Level:</span>{' '}
+                  <Jlpt jlpt={kanji.jlpt as 1 | 2 | 3 | 4 | 5} />
+                </div>
                 <Link
-                  className="visible md:invisible"
+                  className="pt-4 block md:hidden"
                   href={`/kanji/${kanji.id}/edit`}
                   passHref
                 >
                   <Button variant="outline">Edit Kanji</Button>
                 </Link>
-              </div>
-              <div className="space-y-2">
-                <p>
-                  <span className="font-medium">Strokes:</span> {kanji.strokes}
-                </p>
-                <p>
-                  <span className="font-medium">JLPT Level:</span> N{kanji.jlpt}
-                </p>
               </div>
             </div>
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-2xl font-semibold">Details</h2>
-                <Link
-                  className="invisible md:visible"
-                  href={`/kanji/${kanji.id}/edit`}
-                  passHref
-                >
-                  <Button variant="outline">Edit Kanji</Button>
-                </Link>
-              </div>
-              <div className="space-y-2">
-                <div>
+            <div className="flex justify-center space-y-2">
+              <div className="flex flex-col items-start mb-2">
+                <h2 className="text-2xl font-semibold">Readings</h2>
+                <div className="mt-4">
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {kanji.on.map((reading, index) => (
-                      <Badge key={index} variant="secondary">
+                      <Badge
+                        className="text-md font-normal"
+                        key={index}
+                        variant="secondary"
+                      >
                         {reading}
                       </Badge>
                     ))}
                   </div>
                 </div>
-                <div>
+
+                <div className="mt-4">
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {kanji.kun.map((reading, index) => (
-                      <Badge key={index} variant="outline">
+                      <Badge
+                        className="text-md font-normal"
+                        key={index}
+                        variant="outline"
+                      >
                         {reading}
                       </Badge>
                     ))}
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="flex justify-center md:justify-end">
+              <Link
+                className="hidden md:block"
+                href={`/kanji/${kanji.id}/edit`}
+                passHref
+              >
+                <Button variant="outline">Edit Kanji</Button>
+              </Link>
+              {/* <Animate /> */}
             </div>
           </div>
           <Separator className="my-6" />
