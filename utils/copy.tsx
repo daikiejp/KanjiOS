@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 
 interface CopySentenceProps {
   sentence: string;
@@ -16,9 +17,16 @@ interface CopySentenceProps {
 
 export default function CopySentence({ sentence }: CopySentenceProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isCopied) {
+      toast({
+        title: 'Success',
+        description: 'Sentence copied!',
+        duration: 1000,
+      });
+
       const timer = setTimeout(() => {
         setIsCopied(false);
       }, 2000);
