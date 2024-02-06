@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import Jlpt from '@/components/kanjios/Jlpt2';
+import Jlpt from '@/components/kanjios/Jlpt';
 
 interface KanjiCardProps {
   id: number;

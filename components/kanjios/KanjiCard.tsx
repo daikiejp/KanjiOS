@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { KanjiCardProps } from '@/types/kanjiTypes';
 import Link from 'next/link';
 import WordCard from '@/components/kanjios/WordCard';
-import Jlpt from '@/components/kanjios/Jlpt2';
+import Jlpt from '@/components/kanjios/Jlpt';
 import Animate from './Animate';
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
