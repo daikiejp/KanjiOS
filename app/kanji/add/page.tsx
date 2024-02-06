@@ -53,7 +53,7 @@ type KanjiFormData = z.infer<typeof kanjiSchema>;
 
 const BasicInfo: React.FC<{
   control: Control<KanjiFormData>;
-  errors: any;
+  errors: Partial<Record<keyof KanjiFormData, { message?: string }>>;
 }> = ({ control, errors }) => (
   <div className="space-y-4 mt-4">
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,8 +170,8 @@ const BasicInfo: React.FC<{
 
 const Readings: React.FC<{
   control: Control<KanjiFormData>;
-  onFields: any[];
-  kunFields: any[];
+  onFields: { id: string }[];
+  kunFields: { id: string }[];
   appendOn: () => void;
   appendKun: () => void;
   removeOn: (index: number) => void;
@@ -494,7 +494,7 @@ const Word: React.FC<{
 
 const WordsAndSentences: React.FC<{
   control: Control<KanjiFormData>;
-  wordFields: any[];
+  wordFields: { id: string }[];
   appendWord: () => void;
   removeWord: (index: number) => void;
 }> = ({ control, wordFields, appendWord, removeWord }) => (
@@ -511,23 +511,7 @@ const WordsAndSentences: React.FC<{
     </Accordion>
     <Button
       type="button"
-      onClick={() =>
-        appendWord({
-          word_en: '',
-          word_es: '',
-          reading: '',
-          kanji: '',
-          jlpt: 5,
-          sentences: [
-            {
-              sentence: '',
-              furigana: '',
-              sentence_es: '',
-              sentence_en: '',
-            },
-          ],
-        })
-      }
+      onClick={() => appendWord()}
       className="w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
     >
       <Plus className="w-4 h-4 mr-2" />
@@ -582,7 +566,8 @@ export default function AddKanji() {
     remove: removeOn,
   } = useFieldArray({
     control,
-    name: 'on',
+    // @ts-ignore
+    name: 'words.on',
   });
 
   const {
@@ -591,7 +576,8 @@ export default function AddKanji() {
     remove: removeKun,
   } = useFieldArray({
     control,
-    name: 'kun',
+    // @ts-ignore
+    name: 'words.kun',
   });
 
   const {
@@ -688,8 +674,40 @@ export default function AddKanji() {
                   control={control}
                   onFields={onFields}
                   kunFields={kunFields}
-                  appendOn={() => appendOn('')}
-                  appendKun={() => appendKun('')}
+                  appendOn={() =>
+                    appendOn({
+                      kanji: '',
+                      reading: '',
+                      jlpt: 5,
+                      word_en: '',
+                      word_es: '',
+                      sentences: [
+                        {
+                          sentence: '',
+                          furigana: '',
+                          sentence_es: '',
+                          sentence_en: '',
+                        },
+                      ],
+                    })
+                  }
+                  appendKun={() =>
+                    appendKun({
+                      kanji: '',
+                      reading: '',
+                      jlpt: 5,
+                      word_en: '',
+                      word_es: '',
+                      sentences: [
+                        {
+                          sentence: '',
+                          furigana: '',
+                          sentence_es: '',
+                          sentence_en: '',
+                        },
+                      ],
+                    })
+                  }
                   removeOn={removeOn}
                   removeKun={removeKun}
                 />
@@ -698,7 +716,23 @@ export default function AddKanji() {
                 <WordsAndSentences
                   control={control}
                   wordFields={wordFields}
-                  appendWord={appendWord}
+                  appendWord={() =>
+                    appendWord({
+                      word_en: '',
+                      word_es: '',
+                      reading: '',
+                      kanji: '',
+                      jlpt: 5,
+                      sentences: [
+                        {
+                          sentence: '',
+                          furigana: '',
+                          sentence_es: '',
+                          sentence_en: '',
+                        },
+                      ],
+                    })
+                  }
                   removeWord={removeWord}
                 />
               </TabsContent>

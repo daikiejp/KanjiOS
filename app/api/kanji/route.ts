@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
@@ -44,21 +44,42 @@ export async function POST(request: NextRequest) {
         kun: JSON.stringify(kun),
         jlpt: jlpt || 5,
         words: {
-          create: words.map((word: any) => ({
-            word_en: word.word_en || '',
-            word_es: word.word_es || '',
-            reading: word.reading || '',
-            kanji: word.kanji || '',
-            jlpt: word.jlpt || 5,
-            sentences: {
-              create: (word.sentences || []).map((sentence: any) => ({
-                sentence: sentence.sentence || '',
-                furigana: sentence.furigana || '',
-                sentence_es: sentence.sentence_es || '',
-                sentence_en: sentence.sentence_en || '',
-              })),
-            },
-          })),
+          create: words.map(
+            (word: {
+              word_en?: string;
+              word_es?: string;
+              reading?: string;
+              kanji?: string;
+              jlpt?: number;
+              sentences?: {
+                sentence?: string;
+                furigana?: string;
+                sentence_es?: string;
+                sentence_en?: string;
+              }[];
+            }) => ({
+              word_en: word.word_en || '',
+              word_es: word.word_es || '',
+              reading: word.reading || '',
+              kanji: word.kanji || '',
+              jlpt: word.jlpt || 5,
+              sentences: {
+                create: (word.sentences || []).map(
+                  (sentence: {
+                    sentence?: string;
+                    furigana?: string;
+                    sentence_es?: string;
+                    sentence_en?: string;
+                  }) => ({
+                    sentence: sentence.sentence || '',
+                    furigana: sentence.furigana || '',
+                    sentence_es: sentence.sentence_es || '',
+                    sentence_en: sentence.sentence_en || '',
+                  })
+                ),
+              },
+            })
+          ),
         },
       },
       include: {

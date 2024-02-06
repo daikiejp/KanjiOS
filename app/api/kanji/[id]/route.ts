@@ -5,9 +5,9 @@ const prisma = new PrismaClient();
 
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const id = parseInt(context.params.id, 10);
+  const id = parseInt((await context.params).id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json(
@@ -46,7 +46,25 @@ export async function PUT(
         },
       });
 
-      const wordIdsToKeep = words.map((w: any) => w.id).filter(Boolean);
+      interface Word {
+        id?: number;
+        word_en: string;
+        word_es: string;
+        reading: string;
+        kanji: string;
+        jlpt: number;
+        sentences: Sentence[];
+      }
+
+      interface Sentence {
+        id?: number;
+        sentence: string;
+        furigana: string;
+        sentence_es: string;
+        sentence_en: string;
+      }
+
+      const wordIdsToKeep = words.map((w: Word) => w.id).filter(Boolean);
 
       const wordsToDelete = await prisma.word.findMany({
         where: {
@@ -98,7 +116,7 @@ export async function PUT(
         }
 
         const sentenceIdsToKeep = word.sentences
-          .map((s: any) => s.id)
+          .map((s: Sentence) => s.id)
           .filter(Boolean);
 
         await prisma.sentence.deleteMany({
@@ -169,9 +187,9 @@ export async function PUT(
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  const id = parseInt(context.params.id, 10);
+  const id = parseInt((await context.params).id, 10);
 
   if (isNaN(id)) {
     return NextResponse.json(

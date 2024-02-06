@@ -37,7 +37,35 @@ async function importKanjiData() {
   console.log('Finished importing kanji data.');
 }
 
-async function processKanjiData(data) {
+interface KanjiData {
+  kanji: string;
+  strokes: number;
+  reading: string;
+  kanji_en: string;
+  kanji_es: string;
+  on: string[];
+  kun: string[];
+  jlpt: number;
+  words: WordData[];
+}
+
+interface WordData {
+  word_en: string;
+  word_es: string;
+  reading: string;
+  kanji: string;
+  jlpt: number;
+  sentences: SentenceData[];
+}
+
+interface SentenceData {
+  sentence: string;
+  furigana: string;
+  sentence_es: string;
+  sentence_en: string;
+}
+
+async function processKanjiData(data: KanjiData) {
   const existingKanji = await prisma.kanji.findFirst({
     where: { kanji: data.kanji },
   });
@@ -46,36 +74,6 @@ async function processKanjiData(data) {
     console.log(`Kanji ${data.kanji} already exists. Skipping.`);
     return;
   }
-
-  await prisma.kanji.create({
-    data: {
-      kanji: data.kanji,
-      strokes: data.strokes,
-      reading: data.reading,
-      kanji_en: data.kanji_en,
-      kanji_es: data.kanji_es,
-      on: JSON.stringify(data.on),
-      kun: JSON.stringify(data.kun),
-      jlpt: data.jlpt,
-      words: {
-        create: data.words.map((word) => ({
-          word_en: word.word_en,
-          word_es: word.word_es,
-          reading: word.reading,
-          kanji: word.kanji,
-          jlpt: word.jlpt,
-          sentences: {
-            create: word.sentences.map((sentence) => ({
-              sentence: sentence.sentence,
-              furigana: sentence.furigana,
-              sentence_es: sentence.sentence_es,
-              sentence_en: sentence.sentence_en,
-            })),
-          },
-        })),
-      },
-    },
-  });
 }
 
 importKanjiData()
