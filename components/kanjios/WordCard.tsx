@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Eye, EyeOff } from 'lucide-react';
 import CopySentence from '@/utils/copy';
-import Jlpt from '@/components/kanjios/Jlpt';
+import Jlpt from '@/components/kanjios/Jlpt2';
 
 interface Sentence {
   id: number;
