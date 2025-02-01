@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -47,8 +46,8 @@ const kanjiSchema = z.object({
   reading: z.string().min(1, 'Reading is required'),
   kanji_en: z.string().min(1, 'English meaning is required'),
   kanji_es: z.string().min(1, 'Spanish meaning is required'),
-  on: z.array(z.string()).min(1, 'At least one ON reading is required'),
-  kun: z.array(z.string()).min(1, 'At least one KUN reading is required'),
+  on: z.array(z.string()),
+  kun: z.array(z.string()),
   jlpt: z.number().min(1).max(5),
   words: z.array(wordSchema).min(1, 'At least one word is required'),
 });
@@ -589,7 +588,7 @@ export default function EditKanji() {
     remove: removeOn,
   } = useFieldArray({
     control,
-    name: 'on',
+    name: 'on' as 'words',
   });
 
   const {
@@ -598,7 +597,7 @@ export default function EditKanji() {
     remove: removeKun,
   } = useFieldArray({
     control,
-    name: 'kun',
+    name: 'kun' as 'words',
   });
 
   const {
@@ -617,7 +616,19 @@ export default function EditKanji() {
         if (!response.ok) {
           throw new Error('Failed to fetch kanji data');
         }
-        const data = await response.json();
+        const rawData = await response.json();
+
+        const parseOn: [] = rawData.on?.split(",").map((s: string) => s.trim());
+        const parseKun: [] = rawData.kun
+          ?.split(",")
+          .map((s: string) => s.trim());
+
+        const data = {
+          ...rawData,
+          on: parseOn,
+          kun: parseKun,
+        };
+
         reset(data);
       } catch (error) {
         console.error('Error fetching kanji data:', error);
@@ -636,13 +647,32 @@ export default function EditKanji() {
 
   const onSubmit = async (data: KanjiFormData) => {
     setIsSubmitting(true);
+    const parseOn: string = data.on?.join(", ") ?? "";
+    const parseKun: string = data.kun?.join(", ") ?? "";
+
     try {
+      const formattedData = {
+        ...data,
+        on: parseOn,
+        kun: parseKun,
+        //words: data.words.map((word) => ({
+        //  ...word,
+        //  jlpt: word.jlpt || 5,
+        //  sentences: word.sentences.map((sentence) => ({
+        //    sentence: sentence.sentence || '',
+        //    furigana: sentence.furigana || '',
+        //    sentence_es: sentence.sentence_es || '',
+        //    sentence_en: sentence.sentence_en || '',
+        //  })),
+        //})),
+      };
+
       const response = await fetch(`/api/kanji/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formattedData),
       });
 
       if (!response.ok) {

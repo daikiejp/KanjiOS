@@ -40,8 +40,8 @@ export async function PUT(
           reading,
           kanji_en,
           kanji_es,
-          on: JSON.stringify(on),
-          kun: JSON.stringify(kun),
+          on,
+          kun,
           jlpt,
         },
       });
@@ -167,13 +167,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Kanji not found' }, { status: 404 });
     }
 
-    const parsedKanji = {
-      ...updatedKanji,
-      on: JSON.parse(updatedKanji.on),
-      kun: JSON.parse(updatedKanji.kun),
-    };
-
-    return NextResponse.json(parsedKanji);
+    return NextResponse.json(updatedKanji);
   } catch (error) {
     console.error('Error updating kanji:', error);
     return NextResponse.json(
