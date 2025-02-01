@@ -43,8 +43,8 @@ interface KanjiData {
   reading: string;
   kanji_en: string;
   kanji_es: string;
-  on: string[];
-  kun: string[];
+  on: string;
+  kun: string;
   jlpt: number;
   words: WordData[];
 }
@@ -65,7 +65,7 @@ interface SentenceData {
   sentence_en: string;
 }
 
-async function processKanjiData(data: KanjiData) {
+async function processKanjiData(data: KanjiData): Promise<void> {
   const existingKanji = await prisma.kanji.findFirst({
     where: { kanji: data.kanji },
   });
@@ -74,6 +74,36 @@ async function processKanjiData(data: KanjiData) {
     console.log(`Kanji ${data.kanji} already exists. Skipping.`);
     return;
   }
+
+  await prisma.kanji.create({
+    data: {
+      kanji: data.kanji,
+      strokes: data.strokes,
+      reading: data.reading,
+      kanji_en: data.kanji_en,
+      kanji_es: data.kanji_es,
+      on: data.on,
+      kun: data.kun,
+      jlpt: data.jlpt,
+      words: {
+        create: data.words.map((word: WordData) => ({
+          word_en: word.word_en,
+          word_es: word.word_es,
+          reading: word.reading,
+          kanji: word.kanji,
+          jlpt: word.jlpt,
+          sentences: {
+            create: word.sentences.map((sentence: SentenceData) => ({
+              sentence: sentence.sentence,
+              furigana: sentence.furigana,
+              sentence_es: sentence.sentence_es,
+              sentence_en: sentence.sentence_en,
+            })),
+          },
+        })),
+      },
+    },
+  });
 }
 
 importKanjiData()

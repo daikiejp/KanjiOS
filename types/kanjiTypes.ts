@@ -24,8 +24,8 @@ export interface KanjiTypes {
   kanji_es: string;
   jlpt: number;
   strokes: number;
-  on: string[];
-  kun: string[];
+  on: string;
+  kun: string;
   words: Word[];
 }
 
