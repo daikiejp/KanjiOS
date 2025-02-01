@@ -48,8 +48,8 @@ const kanjiSchema = z.object({
   reading: z.string().min(1, 'Reading is required'),
   kanji_en: z.string().min(1, 'English meaning is required'),
   kanji_es: z.string().min(1, 'Spanish meaning is required'),
-  on: z.array(z.string()).min(1, 'At least one ON reading is required'),
-  kun: z.array(z.string()).min(1, 'At least one KUN reading is required'),
+  on: z.array(z.string()),
+  kun: z.array(z.string()),
   jlpt: z.number().min(1).max(5),
   words: z.array(wordSchema).min(1, 'At least one word is required'),
 });

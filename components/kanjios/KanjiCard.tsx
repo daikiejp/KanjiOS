@@ -63,30 +63,32 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 <div className="mt-4">
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.on.split(',').map((reading, index) => (
-                      <Badge
-                        className="text-md font-normal"
-                        key={index}
-                        variant="secondary"
-                      >
-                        {reading.trim()}
-                      </Badge>
-                    ))}
+                    {kanji.on &&
+                      kanji?.on.split(',').map((reading, index) => (
+                        <Badge
+                          className="text-md font-normal"
+                          key={index}
+                          variant="secondary"
+                        >
+                          {reading.trim()}
+                        </Badge>
+                      ))}
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.kun.split(',').map((reading, index) => (
-                      <Badge
-                        className="text-md font-normal"
-                        key={index}
-                        variant="outline"
-                      >
-                        {reading.trim()}
-                      </Badge>
-                    ))}
+                    {kanji.kun &&
+                      kanji.kun.split(',').map((reading, index) => (
+                        <Badge
+                          className="text-md font-normal"
+                          key={index}
+                          variant="outline"
+                        >
+                          {reading.trim()}
+                        </Badge>
+                      ))}
                   </div>
                 </div>
               </div>

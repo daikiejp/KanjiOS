@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
       !reading ||
       !kanji_en ||
       !kanji_es ||
-      !on ||
-      !kun ||
+      // !on ||
+      // !kun ||
       !words ||
       !Array.isArray(words)
     ) {
