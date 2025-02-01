@@ -512,23 +512,7 @@ const WordsAndSentences: React.FC<{
     </Accordion>
     <Button
       type="button"
-      onClick={() =>
-        appendWord({
-          word_en: '',
-          word_es: '',
-          reading: '',
-          kanji: '',
-          jlpt: 5,
-          sentences: [
-            {
-              sentence: '',
-              furigana: '',
-              sentence_es: '',
-              sentence_en: '',
-            },
-          ],
-        })
-      }
+      onClick={() => appendWord()}
       className="w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
     >
       <Plus className="w-4 h-4 mr-2" />
@@ -618,9 +602,9 @@ export default function EditKanji() {
         }
         const rawData = await response.json();
 
-        const parseOn: [] = rawData.on?.split(",").map((s: string) => s.trim());
+        const parseOn: [] = rawData.on?.split(',').map((s: string) => s.trim());
         const parseKun: [] = rawData.kun
-          ?.split(",")
+          ?.split(',')
           .map((s: string) => s.trim());
 
         const data = {
@@ -647,8 +631,8 @@ export default function EditKanji() {
 
   const onSubmit = async (data: KanjiFormData) => {
     setIsSubmitting(true);
-    const parseOn: string = data.on?.join(", ") ?? "";
-    const parseKun: string = data.kun?.join(", ") ?? "";
+    const parseOn: string = data.on?.join(', ') ?? '';
+    const parseKun: string = data.kun?.join(', ') ?? '';
 
     try {
       const formattedData = {
@@ -735,8 +719,8 @@ export default function EditKanji() {
                   control={control}
                   onFields={onFields}
                   kunFields={kunFields}
-                  appendOn={() => appendOn('')}
-                  appendKun={() => appendKun('')}
+                  appendOn={() => appendOn([])}
+                  appendKun={() => appendKun([])}
                   removeOn={removeOn}
                   removeKun={removeKun}
                 />
@@ -745,7 +729,23 @@ export default function EditKanji() {
                 <WordsAndSentences
                   control={control}
                   wordFields={wordFields}
-                  appendWord={appendWord}
+                  appendWord={() =>
+                    appendWord({
+                      kanji: '',
+                      reading: '',
+                      jlpt: 5,
+                      word_en: '',
+                      word_es: '',
+                      sentences: [
+                        {
+                          sentence: '',
+                          furigana: '',
+                          sentence_es: '',
+                          sentence_en: '',
+                        },
+                      ],
+                    })
+                  }
                   removeWord={removeWord}
                 />
               </TabsContent>
