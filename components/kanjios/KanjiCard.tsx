@@ -63,13 +63,13 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 <div className="mt-4">
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.on.map((reading, index) => (
+                    {kanji.on.split(',').map((reading, index) => (
                       <Badge
                         className="text-md font-normal"
                         key={index}
                         variant="secondary"
                       >
-                        {reading}
+                        {reading.trim()}
                       </Badge>
                     ))}
                   </div>
@@ -78,13 +78,13 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 <div className="mt-4">
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.kun.map((reading, index) => (
+                    {kanji.kun.split(',').map((reading, index) => (
                       <Badge
                         className="text-md font-normal"
                         key={index}
                         variant="outline"
                       >
-                        {reading}
+                        {reading.trim()}
                       </Badge>
                     ))}
                   </div>

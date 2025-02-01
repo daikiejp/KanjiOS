@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextResponse, NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
@@ -41,8 +40,8 @@ export async function POST(request: NextRequest) {
         reading,
         kanji_en,
         kanji_es,
-        on: JSON.stringify(on),
-        kun: JSON.stringify(kun),
+        on,
+        kun,
         jlpt: jlpt || 5,
         words: {
           create: words.map(
@@ -110,14 +109,7 @@ export async function GET() {
       include: { words: true },
     });
 
-    // Parse JSON strings back to arrays
-    const parsedKanjis = kanjis.map((kanji) => ({
-      ...kanji,
-      on: JSON.parse(kanji.on),
-      kun: JSON.parse(kanji.kun),
-    }));
-
-    return NextResponse.json(parsedKanjis);
+    return NextResponse.json(kanjis);
   } catch (error) {
     console.error('Error fetching kanjis:', error);
     return NextResponse.json(

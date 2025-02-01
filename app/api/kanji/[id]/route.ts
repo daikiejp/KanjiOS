@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
@@ -217,8 +216,6 @@ export async function GET(
 
     const parsedKanji = {
       ...kanji,
-      on: JSON.parse(kanji.on),
-      kun: JSON.parse(kanji.kun),
     };
 
     return NextResponse.json(parsedKanji);
