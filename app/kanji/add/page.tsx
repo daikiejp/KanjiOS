@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray, Controller, Control } from 'react-hook-form';
+import {
+  useForm,
+  useFieldArray,
+  Controller,
+  type Control,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -89,7 +94,9 @@ const BasicInfo: React.FC<{
               id="strokes"
               type="number"
               min="1"
-              onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+              onChange={(e) =>
+                field.onChange(Number.parseInt(e.target.value, 10))
+              }
               className="text-2xl h-20 text-center"
             />
           )}
@@ -156,7 +163,9 @@ const BasicInfo: React.FC<{
             type="number"
             min="1"
             max="5"
-            onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+            onChange={(e) =>
+              field.onChange(Number.parseInt(e.target.value, 10))
+            }
             className="text-2xl h-12 text-center"
           />
         )}
@@ -442,7 +451,9 @@ const Word: React.FC<{
                   type="number"
                   min="1"
                   max="5"
-                  onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+                  onChange={(e) =>
+                    field.onChange(Number.parseInt(e.target.value, 10))
+                  }
                   className="w-20 text-center"
                 />
               )}
@@ -566,8 +577,7 @@ export default function AddKanji() {
     remove: removeOn,
   } = useFieldArray({
     control,
-    // @ts-ignore
-    name: 'words.on',
+    name: 'on' as 'words',
   });
 
   const {
@@ -576,8 +586,7 @@ export default function AddKanji() {
     remove: removeKun,
   } = useFieldArray({
     control,
-    // @ts-ignore
-    name: 'words.kun',
+    name: 'kun' as 'words',
   });
 
   const {
@@ -591,11 +600,14 @@ export default function AddKanji() {
 
   const onSubmit = async (data: KanjiFormData) => {
     setIsSubmitting(true);
+    const parseOn: string = data.on?.join(', ') ?? '';
+    const parseKun: string = data.kun?.join(', ') ?? '';
+
     try {
       const formattedData = {
         ...data,
-        on: data.on.filter((reading) => reading.trim() !== ''),
-        kun: data.kun.filter((reading) => reading.trim() !== ''),
+        on: parseOn,
+        kun: parseKun,
         words: data.words.map((word) => ({
           ...word,
           jlpt: word.jlpt || 5,
