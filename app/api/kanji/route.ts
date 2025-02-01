@@ -33,6 +33,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const existingKanji = await prisma.kanji.findFirst({
+      where: { kanji: body.kanji },
+    });
+
+    if (existingKanji) {
+      return NextResponse.json(
+        { error: `Kanji ${body.kanji} already exists. Skipping.` },
+        { status: 409 }
+      );
+    }
+
     const newKanji = await prisma.kanji.create({
       data: {
         kanji,
