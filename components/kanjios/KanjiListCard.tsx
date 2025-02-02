@@ -23,7 +23,7 @@ export function KanjiListCard({
   return (
     <Link href={`/kanji/${id}`}>
       <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-        <CardHeader className="bg-[#FF7BAC] text-white cursor-pointer">
+        <CardHeader className="rounded-t-lg bg-[#FF7BAC] text-white cursor-pointer">
           <CardTitle className="text-center">
             <span className="text-4xl font-bold">{kanji}</span>
           </CardTitle>
