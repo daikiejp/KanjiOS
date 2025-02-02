@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "pnpm dlx prisma db push && pnpm dlx prisma generate && next build",
+    "prebuild": "cp prisma/schema.prisma.prod prisma/schema.prisma",
+    "build": "pnpm run prebuild && pnpm dlx prisma db push && pnpm dlx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts",
@@ -36,7 +37,7 @@
     "@types/node": "22.8.1",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-next": "15.0.1",
     "postcss": "^8",
     "prisma": "^6.6.0",
