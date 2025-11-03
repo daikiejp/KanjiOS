@@ -620,6 +620,10 @@ export default function AddKanji() {
         })),
       };
 
+      if (process.env.NODE_ENV === "production") {
+        return console.log("No available to Add Kanji in production");
+      }
+
       const response = await fetch("/api/kanji", {
         method: "POST",
         headers: {
