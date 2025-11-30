@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Animate
 /components/kanjios/Animate.tsx
+
+# prisma
+/lib/generated/prisma

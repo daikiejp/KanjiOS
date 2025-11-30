@@ -1,12 +1,9 @@
-// @ts-nocheck
-import { promises as fs } from 'fs';
-import path from 'path';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { promises as fs } from "fs";
+import path from "path";
+import prisma from "@/lib/prisma";
 
 async function exportKanjiData() {
-  const exportDir = path.join(__dirname, 'exports');
+  const exportDir = path.join(__dirname, "exports");
 
   // Ensure the export directory exists
   await fs.mkdir(exportDir, { recursive: true });
@@ -39,6 +36,7 @@ async function exportKanjiData() {
       on: kanji.on,
       kun: kanji.kun,
       jlpt: kanji.jlpt,
+      grade: kanji.grade,
       words: kanji.words.map((word) => ({
         word_en: word.word_en,
         word_es: word.word_es,
@@ -55,21 +53,21 @@ async function exportKanjiData() {
     };
 
     // Write the JSON file
-    await fs.writeFile(filePath, JSON.stringify(exportData, null, 2), 'utf8');
+    await fs.writeFile(filePath, JSON.stringify(exportData, null, 2), "utf8");
 
     console.log(`Exported ${i + 1}/${allKanji.length}: ${fileName}`);
   }
 
-  console.log('Finished exporting kanji data.');
+  console.log("Finished exporting kanji data.");
 }
 
 exportKanjiData()
   .catch((e) => {
-    console.error('Error during export:', e);
+    console.error("Error during export:", e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
 
-console.log('Starting kanji data export...');
+console.log("Starting kanji data export...");

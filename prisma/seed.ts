@@ -1,8 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 async function importKanjiData() {
   const seedDir = path.join(__dirname, "seeds");
