@@ -1,13 +1,13 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { PrismaClient } from '@prisma/client';
+import { promises as fs } from "fs";
+import path from "path";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function importKanjiData() {
-  const seedDir = path.join(__dirname, 'seeds');
+  const seedDir = path.join(__dirname, "seeds");
   const files = await fs.readdir(seedDir);
-  const jsonFiles = files.filter((file) => file.endsWith('.json'));
+  const jsonFiles = files.filter((file) => file.endsWith(".json"));
 
   console.log(`Found ${jsonFiles.length} JSON files to process.`);
 
@@ -19,22 +19,22 @@ async function importKanjiData() {
     await Promise.all(
       batch.map(async (file) => {
         const filePath = path.join(seedDir, file);
-        const data = JSON.parse(await fs.readFile(filePath, 'utf8'));
+        const data = JSON.parse(await fs.readFile(filePath, "utf8"));
 
         try {
           await processKanjiData(data);
           processedCount++;
           console.log(
-            `Processed ${processedCount}/${jsonFiles.length}: ${file}`
+            `Processed ${processedCount}/${jsonFiles.length}: ${file}`,
           );
         } catch (error) {
           console.error(`Error processing ${file}:`, error);
         }
-      })
+      }),
     );
   }
 
-  console.log('Finished importing kanji data.');
+  console.log("Finished importing kanji data.");
 }
 
 interface KanjiData {
@@ -46,6 +46,7 @@ interface KanjiData {
   on: string;
   kun: string;
   jlpt: number;
+  grade: string;
   words: WordData[];
 }
 
@@ -85,6 +86,7 @@ async function processKanjiData(data: KanjiData): Promise<void> {
       on: data.on,
       kun: data.kun,
       jlpt: data.jlpt,
+      grade: data.grade,
       words: {
         create: data.words.map((word: WordData) => ({
           word_en: word.word_en,
@@ -115,4 +117,4 @@ importKanjiData()
     await prisma.$disconnect();
   });
 
-console.log('Starting kanji data import...');
+console.log("Starting kanji data import...");

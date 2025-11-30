@@ -1,55 +1,56 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useForm, useFieldArray, Controller, Control } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useForm, useFieldArray, Controller, Control } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
-import { useToast } from '@/hooks/use-toast';
-import { Plus, Trash2 } from 'lucide-react';
+} from "@/components/ui/accordion";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Trash2 } from "lucide-react";
 
 const sentenceSchema = z.object({
   id: z.number().optional(),
-  sentence: z.string().min(1, 'Sentence is required'),
-  furigana: z.string().min(1, 'Furigana is required'),
-  sentence_es: z.string().min(1, 'Spanish sentence is required'),
-  sentence_en: z.string().min(1, 'English sentence is required'),
+  sentence: z.string().min(1, "Sentence is required"),
+  furigana: z.string().min(1, "Furigana is required"),
+  sentence_es: z.string().min(1, "Spanish sentence is required"),
+  sentence_en: z.string().min(1, "English sentence is required"),
 });
 
 const wordSchema = z.object({
   id: z.number().optional(),
-  word_en: z.string().min(1, 'English word is required'),
-  word_es: z.string().min(1, 'Spanish word is required'),
-  reading: z.string().min(1, 'Reading is required'),
-  kanji: z.string().min(1, 'Kanji is required'),
+  word_en: z.string().min(1, "English word is required"),
+  word_es: z.string().min(1, "Spanish word is required"),
+  reading: z.string().min(1, "Reading is required"),
+  kanji: z.string().min(1, "Kanji is required"),
   jlpt: z.number().min(1).max(5),
   sentences: z
     .array(sentenceSchema)
-    .min(1, 'At least one sentence is required'),
+    .min(1, "At least one sentence is required"),
 });
 
 const kanjiSchema = z.object({
   id: z.number(),
-  kanji: z.string().min(1, 'Kanji is required'),
-  strokes: z.number().min(1, 'Number of strokes is required'),
-  reading: z.string().min(1, 'Reading is required'),
-  kanji_en: z.string().min(1, 'English meaning is required'),
-  kanji_es: z.string().min(1, 'Spanish meaning is required'),
+  kanji: z.string().min(1, "Kanji is required"),
+  strokes: z.number().min(1, "Number of strokes is required"),
+  reading: z.string().min(1, "Reading is required"),
+  kanji_en: z.string().min(1, "English meaning is required"),
+  kanji_es: z.string().min(1, "Spanish meaning is required"),
   on: z.array(z.string()),
   kun: z.array(z.string()),
   jlpt: z.number().min(1).max(5),
-  words: z.array(wordSchema).min(1, 'At least one word is required'),
+  grade: z.string().min(1, "Grade is required"),
+  words: z.array(wordSchema).min(1, "At least one word is required"),
 });
 
 type KanjiFormData = z.infer<typeof kanjiSchema>;
@@ -145,28 +146,50 @@ const BasicInfo: React.FC<{
         )}
       </div>
     </div>
-    <div>
-      <Label htmlFor="jlpt" className="text-lg">
-        JLPT Level
-      </Label>
-      <Controller
-        name="jlpt"
-        control={control}
-        render={({ field }) => (
-          <Input
-            {...field}
-            id="jlpt"
-            type="number"
-            min="1"
-            max="5"
-            onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
-            className="text-2xl h-12 text-center"
-          />
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="jlpt" className="text-lg">
+          JLPT Level
+        </Label>
+        <Controller
+          name="jlpt"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="jlpt"
+              type="number"
+              min="1"
+              max="5"
+              onChange={(e) => field.onChange(parseInt(e.target.value, 10))}
+              className="text-2xl h-12 text-center"
+            />
+          )}
+        />
+        {errors.jlpt && (
+          <p className="text-red-500 text-sm mt-1">{errors.jlpt.message}</p>
         )}
-      />
-      {errors.jlpt && (
-        <p className="text-red-500 text-sm mt-1">{errors.jlpt.message}</p>
-      )}
+      </div>
+      <div>
+        <Label htmlFor="grade" className="text-lg">
+          Grade Level
+        </Label>
+        <Controller
+          name="grade"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              id="grade"
+              className="text-2xl h-12 text-center"
+            />
+          )}
+        />
+        {errors.grade && (
+          <p className="text-red-500 text-sm mt-1">{errors.grade.message}</p>
+        )}
+      </div>
     </div>
   </div>
 );
@@ -264,7 +287,7 @@ const Sentence: React.FC<{
             control={control}
             render={({ field }) => (
               <span className="text-sm text-gray-500">
-                {field.value.slice(0, 30)}...
+                {field.value?.slice(0, 30) || ""}...
               </span>
             )}
           />
@@ -465,10 +488,10 @@ const Word: React.FC<{
                 type="button"
                 onClick={() =>
                   appendSentence({
-                    sentence: '',
-                    furigana: '',
-                    sentence_es: '',
-                    sentence_en: '',
+                    sentence: "",
+                    furigana: "",
+                    sentence_es: "",
+                    sentence_en: "",
                   })
                 }
                 className="w-full bg-[#29ABE2] hover:bg-[#1A8ED1] text-white"
@@ -524,10 +547,11 @@ const WordsAndSentences: React.FC<{
 export default function EditKanji() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [originalKanji, setOriginalKanji] = useState<string>("");
   const { toast } = useToast();
   const router = useRouter();
   const params = useParams();
-  const { id } = params;
+  const slug = params.slug as string;
 
   const {
     control,
@@ -538,27 +562,28 @@ export default function EditKanji() {
     resolver: zodResolver(kanjiSchema),
     defaultValues: {
       id: 0,
-      kanji: '',
+      kanji: "",
       strokes: 1,
-      reading: '',
-      kanji_en: '',
-      kanji_es: '',
-      on: [''],
-      kun: [''],
+      reading: "",
+      kanji_en: "",
+      kanji_es: "",
+      on: [""],
+      kun: [""],
       jlpt: 5,
       words: [
         {
-          word_en: '',
-          word_es: '',
-          reading: '',
-          kanji: '',
+          word_en: "",
+          word_es: "",
+          reading: "",
+          kanji: "",
           jlpt: 5,
+          grade: "",
           sentences: [
             {
-              sentence: '',
-              furigana: '',
-              sentence_es: '',
-              sentence_en: '',
+              sentence: "",
+              furigana: "",
+              sentence_es: "",
+              sentence_en: "",
             },
           ],
         },
@@ -572,7 +597,7 @@ export default function EditKanji() {
     remove: removeOn,
   } = useFieldArray({
     control,
-    name: 'on' as 'words',
+    name: "on" as "words",
   });
 
   const {
@@ -581,7 +606,7 @@ export default function EditKanji() {
     remove: removeKun,
   } = useFieldArray({
     control,
-    name: 'kun' as 'words',
+    name: "kun" as "words",
   });
 
   const {
@@ -590,22 +615,28 @@ export default function EditKanji() {
     remove: removeWord,
   } = useFieldArray({
     control,
-    name: 'words',
+    name: "words",
   });
 
   useEffect(() => {
     const fetchKanjiData = async () => {
       try {
-        const response = await fetch(`/api/kanji/${id}`);
+        const encodedSlug = encodeURIComponent(slug);
+        const response = await fetch(`/api/kanji/${encodedSlug}`);
+
         if (!response.ok) {
-          throw new Error('Failed to fetch kanji data');
+          throw new Error("Failed to fetch kanji data");
         }
         const rawData = await response.json();
 
-        const parseOn: [] = rawData.on?.split(',').map((s: string) => s.trim());
-        const parseKun: [] = rawData.kun
-          ?.split(',')
-          .map((s: string) => s.trim());
+        setOriginalKanji(rawData.kanji);
+
+        const parseOn: string[] = rawData.on
+          ?.split(",")
+          .map((s: string) => s.trim()) || [""];
+        const parseKun: string[] = rawData.kun
+          ?.split(",")
+          .map((s: string) => s.trim()) || [""];
 
         const data = {
           ...rawData,
@@ -615,66 +646,65 @@ export default function EditKanji() {
 
         reset(data);
       } catch (error) {
-        console.error('Error fetching kanji data:', error);
+        console.error("Error fetching kanji data:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to load kanji data. Please try again.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load kanji data. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchKanjiData();
-  }, [id, reset, toast]);
+    if (slug) {
+      fetchKanjiData();
+    }
+  }, [slug, reset, toast]);
 
   const onSubmit = async (data: KanjiFormData) => {
     setIsSubmitting(true);
-    const parseOn: string = data.on?.join(', ') ?? '';
-    const parseKun: string = data.kun?.join(', ') ?? '';
+    const parseOn: string = data.on?.join(", ") ?? "";
+    const parseKun: string = data.kun?.join(", ") ?? "";
 
     try {
       const formattedData = {
         ...data,
         on: parseOn,
         kun: parseKun,
-        //words: data.words.map((word) => ({
-        //  ...word,
-        //  jlpt: word.jlpt || 5,
-        //  sentences: word.sentences.map((sentence) => ({
-        //    sentence: sentence.sentence || '',
-        //    furigana: sentence.furigana || '',
-        //    sentence_es: sentence.sentence_es || '',
-        //    sentence_en: sentence.sentence_en || '',
-        //  })),
-        //})),
       };
 
-      const response = await fetch(`/api/kanji/${id}`, {
-        method: 'PUT',
+      const encodedSlug = encodeURIComponent(slug);
+      const response = await fetch(`/api/kanji/${encodedSlug}`, {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formattedData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update kanji');
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update kanji");
       }
 
+      const result = await response.json();
+
       toast({
-        title: 'Success',
-        description: 'Kanji updated successfully',
+        title: "Success",
+        description: "Kanji updated successfully",
       });
 
-      router.push(`/kanji/${id}`);
+      router.push(`/kanji/${encodeURIComponent(result.kanji)}`);
     } catch (error) {
-      console.error('Error updating kanji:', error);
+      console.error("Error updating kanji:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to update kanji. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to update kanji. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -694,7 +724,7 @@ export default function EditKanji() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-4xl font-bold text-center text-[#FF7BAC]">
-            Edit Kanji
+            Edit Kanji: {originalKanji}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -719,8 +749,8 @@ export default function EditKanji() {
                   control={control}
                   onFields={onFields}
                   kunFields={kunFields}
-                  appendOn={() => appendOn([])}
-                  appendKun={() => appendKun([])}
+                  appendOn={() => appendOn("")}
+                  appendKun={() => appendKun("")}
                   removeOn={removeOn}
                   removeKun={removeKun}
                 />
@@ -731,17 +761,18 @@ export default function EditKanji() {
                   wordFields={wordFields}
                   appendWord={() =>
                     appendWord({
-                      kanji: '',
-                      reading: '',
+                      kanji: "",
+                      reading: "",
                       jlpt: 5,
-                      word_en: '',
-                      word_es: '',
+                      grade: "",
+                      word_en: "",
+                      word_es: "",
                       sentences: [
                         {
-                          sentence: '',
-                          furigana: '',
-                          sentence_es: '',
-                          sentence_en: '',
+                          sentence: "",
+                          furigana: "",
+                          sentence_es: "",
+                          sentence_en: "",
                         },
                       ],
                     })
@@ -756,7 +787,7 @@ export default function EditKanji() {
               className="w-full bg-[#FF7BAC] hover:bg-[#FF5A93] text-white text-lg py-6"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Updating...' : 'Update Kanji'}
+              {isSubmitting ? "Updating..." : "Update Kanji"}
             </Button>
           </form>
         </CardContent>

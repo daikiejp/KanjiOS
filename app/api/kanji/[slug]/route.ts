@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ slug: string }> },
 ) {
-  const id = parseInt((await context.params).id, 10);
+  const slug = decodeURIComponent((await context.params).slug);
 
-  if (isNaN(id)) {
+  if (!slug) {
     return NextResponse.json(
-      { error: 'Invalid id parameter' },
-      { status: 400 }
+      { error: "Invalid slug parameter" },
+      { status: 400 },
     );
   }
 
@@ -28,12 +28,13 @@ export async function PUT(
       on,
       kun,
       jlpt,
+      grade,
       words,
     } = body;
 
     const updatedKanji = await prisma.$transaction(async (prisma) => {
       await prisma.kanji.update({
-        where: { id },
+        where: { kanji: slug },
         data: {
           kanji,
           strokes,
@@ -43,15 +44,16 @@ export async function PUT(
           on,
           kun,
           jlpt,
+          grade,
         },
       });
 
       interface Word {
         id?: number;
+        kanji: string;
         word_en: string;
         word_es: string;
         reading: string;
-        kanji: string;
         jlpt: number;
         sentences: Sentence[];
       }
@@ -64,35 +66,30 @@ export async function PUT(
         sentence_en: string;
       }
 
-      const wordIdsToKeep = words.map((w: Word) => w.id).filter(Boolean);
-
-      const wordsToDelete = await prisma.word.findMany({
-        where: {
-          kanjiId: id,
-          id: { notIn: wordIdsToKeep },
-        },
-        include: {
-          sentences: true,
-        },
+      const existingWords = await prisma.word.findMany({
+        where: { kanjiKanji: slug },
+        include: { sentences: true },
       });
 
+      const wordIdsToKeep = words
+        .filter((w: Word) => w.id)
+        .map((w: Word) => w.id);
+
+      const wordsToDelete = existingWords.filter(
+        (w) => !wordIdsToKeep.includes(w.id),
+      );
+
       for (const word of wordsToDelete) {
-        await prisma.sentence.deleteMany({
-          where: { wordId: word.id },
+        await prisma.word.delete({
+          where: { id: word.id },
         });
       }
 
-      await prisma.word.deleteMany({
-        where: {
-          kanjiId: id,
-          id: { notIn: wordIdsToKeep },
-        },
-      });
-
       for (const word of words) {
-        let updatedWord;
+        let wordRecord;
+
         if (word.id) {
-          updatedWord = await prisma.word.update({
+          wordRecord = await prisma.word.update({
             where: { id: word.id },
             data: {
               word_en: word.word_en,
@@ -103,28 +100,37 @@ export async function PUT(
             },
           });
         } else {
-          updatedWord = await prisma.word.create({
+          wordRecord = await prisma.word.create({
             data: {
+              kanji: word.kanji,
               word_en: word.word_en,
               word_es: word.word_es,
               reading: word.reading,
-              kanji: word.kanji,
               jlpt: word.jlpt,
-              kanjiId: id,
+              kanjiKanji: kanji,
             },
           });
         }
 
-        const sentenceIdsToKeep = word.sentences
-          .map((s: Sentence) => s.id)
-          .filter(Boolean);
+        const existingSentences = word.id
+          ? await prisma.sentence.findMany({
+              where: { wordId: word.id },
+            })
+          : [];
 
-        await prisma.sentence.deleteMany({
-          where: {
-            wordId: updatedWord.id,
-            id: { notIn: sentenceIdsToKeep },
-          },
-        });
+        const sentenceIdsToKeep = word.sentences
+          .filter((s: Sentence) => s.id)
+          .map((s: Sentence) => s.id);
+
+        const sentencesToDelete = existingSentences.filter(
+          (s) => !sentenceIdsToKeep.includes(s.id),
+        );
+
+        for (const sentence of sentencesToDelete) {
+          await prisma.sentence.delete({
+            where: { id: sentence.id },
+          });
+        }
 
         for (const sentence of word.sentences) {
           if (sentence.id) {
@@ -144,7 +150,7 @@ export async function PUT(
                 furigana: sentence.furigana,
                 sentence_es: sentence.sentence_es,
                 sentence_en: sentence.sentence_en,
-                wordId: updatedWord.id,
+                wordId: wordRecord.id,
               },
             });
           }
@@ -152,7 +158,7 @@ export async function PUT(
       }
 
       return prisma.kanji.findUnique({
-        where: { id },
+        where: { kanji: kanji },
         include: {
           words: {
             include: {
@@ -164,15 +170,15 @@ export async function PUT(
     });
 
     if (!updatedKanji) {
-      return NextResponse.json({ error: 'Kanji not found' }, { status: 404 });
+      return NextResponse.json({ error: "Kanji not found" }, { status: 404 });
     }
 
     return NextResponse.json(updatedKanji);
   } catch (error) {
-    console.error('Error updating kanji:', error);
+    console.error("Error updating kanji:", error);
     return NextResponse.json(
-      { error: 'Failed to update kanji' },
-      { status: 500 }
+      { error: "Failed to update kanji", details: (error as Error).message },
+      { status: 500 },
     );
   } finally {
     await prisma.$disconnect();
@@ -181,20 +187,20 @@ export async function PUT(
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ slug: string }> },
 ) {
-  const id = parseInt((await context.params).id, 10);
+  const slug = decodeURIComponent((await context.params).slug);
 
-  if (isNaN(id)) {
+  if (!slug) {
     return NextResponse.json(
-      { error: 'Invalid id parameter' },
-      { status: 400 }
+      { error: "Invalid slug parameter" },
+      { status: 400 },
     );
   }
 
   try {
     const kanji = await prisma.kanji.findUnique({
-      where: { id },
+      where: { kanji: slug },
       include: {
         words: {
           include: {
@@ -205,19 +211,15 @@ export async function GET(
     });
 
     if (!kanji) {
-      return NextResponse.json({ error: 'Kanji not found' }, { status: 404 });
+      return NextResponse.json({ error: "Kanji not found" }, { status: 404 });
     }
 
-    const parsedKanji = {
-      ...kanji,
-    };
-
-    return NextResponse.json(parsedKanji);
+    return NextResponse.json(kanji);
   } catch (error) {
-    console.error('Error fetching kanji:', error);
+    console.error("Error fetching kanji:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch kanji' },
-      { status: 500 }
+      { error: "Failed to fetch kanji" },
+      { status: 500 },
     );
   } finally {
     await prisma.$disconnect();

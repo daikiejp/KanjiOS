@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
-import Jlpt from '@/components/kanjios/Jlpt';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import Jlpt from "@/components/kanjios/Jlpt";
 
 interface KanjiCardProps {
   id: number;
@@ -13,7 +13,6 @@ interface KanjiCardProps {
 }
 
 export function KanjiListCard({
-  id,
   kanji,
   reading,
   kanji_en,
@@ -21,7 +20,7 @@ export function KanjiListCard({
   jlpt,
 }: KanjiCardProps) {
   return (
-    <Link href={`/kanji/${id}`}>
+    <Link href={`/kanji/${encodeURIComponent(kanji)}`}>
       <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
         <CardHeader className="rounded-t-lg bg-[#FF7BAC] text-white cursor-pointer">
           <CardTitle className="text-center">

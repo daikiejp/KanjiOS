@@ -1,13 +1,12 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { KanjiCardProps } from '@/types/kanjiTypes';
-import Link from 'next/link';
-import WordCard from '@/components/kanjios/WordCard';
-import Jlpt from '@/components/kanjios/Jlpt';
-// import Animate from './Animate';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { KanjiCardProps } from "@/types/kanjiTypes";
+import Link from "next/link";
+import WordCard from "@/components/kanjios/WordCard";
+import Jlpt from "@/components/kanjios/Jlpt";
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
   return (
@@ -42,20 +41,26 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 <h2 className="text-2xl font-semibold">Details</h2>
                 <div className="space-y-4">
                   <p className="mt-4">
-                    <span className="font-medium">Strokes:</span>{' '}
+                    <span className="font-medium">Strokes:</span>{" "}
                     {kanji.strokes}
                   </p>
-                  <span className="font-medium">Level:</span>{' '}
+                  <span className="font-medium">Level:</span>{" "}
                   <Jlpt jlpt={kanji.jlpt as 1 | 2 | 3 | 4 | 5} />
+                  <p>
+                    <span className="font-medium">Grade:</span> {kanji.grade}
+                  </p>
                 </div>
-                {process.env.NODE_ENV === 'production' ? " " :
-                <Link
-                  className="pt-4 block md:hidden"
-                  href={`/kanji/${kanji.id}/edit`}
-                  passHref
-                >
-                  <Button variant="outline">Edit Kanji</Button>
-                </Link>}
+                {process.env.NODE_ENV === "production" ? (
+                  " "
+                ) : (
+                  <Link
+                    className="pt-4 block md:hidden"
+                    href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
+                    passHref
+                  >
+                    <Button variant="outline">Edit Kanji</Button>
+                  </Link>
+                )}
               </div>
             </div>
             <div className="flex justify-center space-y-2">
@@ -65,7 +70,7 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {kanji.on &&
-                      kanji?.on.split(',').map((reading, index) => (
+                      kanji?.on.split(",").map((reading, index) => (
                         <Badge
                           className="text-md font-normal"
                           key={index}
@@ -81,7 +86,7 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {kanji.kun &&
-                      kanji.kun.split(',').map((reading, index) => (
+                      kanji.kun.split(",").map((reading, index) => (
                         <Badge
                           className="text-md font-normal"
                           key={index}
@@ -94,17 +99,19 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 </div>
               </div>
             </div>
-            {process.env.NODE_ENV === 'production' ? " " : 
-            <div className="flex justify-center md:justify-end">
-              <Link
-                className="hidden md:block"
-                href={`/kanji/${kanji.id}/edit`}
-                passHref
-              >
-                <Button variant="outline">Edit Kanji</Button>
-              </Link>
-              {/* <Animate /> */}
-            </div>}
+            {process.env.NODE_ENV === "production" ? (
+              " "
+            ) : (
+              <div className="flex justify-center md:justify-end">
+                <Link
+                  className="hidden md:block"
+                  href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
+                  passHref
+                >
+                  <Button variant="outline">Edit Kanji</Button>
+                </Link>
+              </div>
+            )}
           </div>
           <Separator className="my-6" />
           <div>
