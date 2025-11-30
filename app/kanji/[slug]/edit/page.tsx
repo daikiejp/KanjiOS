@@ -577,7 +577,6 @@ export default function EditKanji() {
           reading: "",
           kanji: "",
           jlpt: 5,
-          grade: "",
           sentences: [
             {
               sentence: "",
@@ -764,7 +763,6 @@ export default function EditKanji() {
                       kanji: "",
                       reading: "",
                       jlpt: 5,
-                      grade: "",
                       word_en: "",
                       word_es: "",
                       sentences: [
