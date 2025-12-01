@@ -1,16 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Eye, EyeOff } from 'lucide-react';
-import CopySentence from '@/utils/copy';
-import Jlpt from '@/components/kanjios/Jlpt';
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Eye, EyeOff } from "lucide-react";
+import CopySentence from "@/utils/copy";
+import Jlpt from "@/components/kanjios/Jlpt";
 
 interface Sentence {
   id: number;
@@ -62,7 +62,7 @@ export default function WordCard({
             <ruby key={`kanji-before-${match.index}`}>
               {splitKanji[0]}
               <rt>{reading}</rt>
-            </ruby>
+            </ruby>,
           );
         }
 
@@ -72,7 +72,7 @@ export default function WordCard({
               {word}
             </span>
             <rt>{reading}</rt>
-          </ruby>
+          </ruby>,
         );
 
         if (splitKanji[1]) {
@@ -80,7 +80,7 @@ export default function WordCard({
             <ruby key={`kanji-after-${match.index}`}>
               {splitKanji[1]}
               <rt>{reading}</rt>
-            </ruby>
+            </ruby>,
           );
         }
       } else {
@@ -88,7 +88,7 @@ export default function WordCard({
           <ruby key={match.index}>
             {kanji}
             <rt>{reading}</rt>
-          </ruby>
+          </ruby>,
         );
       }
 
@@ -123,7 +123,7 @@ export default function WordCard({
 
         if (splitKanji[0]) {
           result.push(
-            <span key={`kanji-before-${match.index}`}>{splitKanji[0]}</span>
+            <span key={`kanji-before-${match.index}`}>{splitKanji[0]}</span>,
           );
         }
 
@@ -133,12 +133,12 @@ export default function WordCard({
             className="font-bold text-[#FF7BAC] leading-[2.5rem] h-[2.7rem]"
           >
             {word}
-          </span>
+          </span>,
         );
 
         if (splitKanji[1]) {
           result.push(
-            <span key={`kanji-after-${match.index}`}>{splitKanji[1]}</span>
+            <span key={`kanji-after-${match.index}`}>{splitKanji[1]}</span>,
           );
         }
       } else {
@@ -202,7 +202,7 @@ export default function WordCard({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{showFurigana ? 'Hide furigana' : 'Show furigana'}</p>
+                    <p>{showFurigana ? "Hide furigana" : "Show furigana"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -234,7 +234,7 @@ export default function WordCard({
               <Button
                 onClick={() =>
                   setCurrentSentenceIndex((prev) =>
-                    prev > 0 ? prev - 1 : sentences.length - 1
+                    prev > 0 ? prev - 1 : sentences.length - 1,
                   )
                 }
                 variant="outline"
@@ -244,7 +244,7 @@ export default function WordCard({
               <Button
                 onClick={() =>
                   setCurrentSentenceIndex((prev) =>
-                    prev < sentences.length - 1 ? prev + 1 : 0
+                    prev < sentences.length - 1 ? prev + 1 : 0,
                   )
                 }
                 variant="outline"

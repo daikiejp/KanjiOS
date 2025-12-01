@@ -1,5 +1,5 @@
-import { Input } from '@/components/ui/input';
-import { SearchInputProps } from '@/types/kanjiTypes';
+import { Input } from "@/components/ui/input";
+import { SearchInputProps } from "@/types";
 
 export function SearchInput({ value, onChange }: SearchInputProps) {
   return (

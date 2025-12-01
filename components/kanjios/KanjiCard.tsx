@@ -3,12 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { KanjiCardProps } from "@/types/kanjiTypes";
+import { KanjiCardProps } from "@/types";
+import { parseReadings } from "@/utils/readings";
 import Link from "next/link";
 import WordCard from "@/components/kanjios/WordCard";
 import Jlpt from "@/components/kanjios/Jlpt";
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
+  const onReadings = parseReadings(kanji.on);
+  const kunReadings = parseReadings(kanji.kun);
+
   return (
     <div className="container mx-auto p-4 font-sans">
       <Card className="bg-white shadow-lg max-w-4xl mx-auto">
@@ -34,6 +38,7 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
             </div>
           </CardTitle>
         </CardHeader>
+
         <CardContent className="p-6 md:p-8">
           <div className="grid gap-6 grid-cols-2 md:grid-cols-3">
             <div className="flex justify-start">
@@ -44,15 +49,15 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                     <span className="font-medium">Strokes:</span>{" "}
                     {kanji.strokes}
                   </p>
-                  <span className="font-medium">Level:</span>{" "}
-                  <Jlpt jlpt={kanji.jlpt as 1 | 2 | 3 | 4 | 5} />
+                  <div>
+                    <span className="font-medium">Level:</span>{" "}
+                    <Jlpt jlpt={kanji.jlpt as 1 | 2 | 3 | 4 | 5} />
+                  </div>
                   <p>
                     <span className="font-medium">Grade:</span> {kanji.grade}
                   </p>
                 </div>
-                {process.env.NODE_ENV === "production" ? (
-                  " "
-                ) : (
+                {process.env.NODE_ENV !== "production" && (
                   <Link
                     className="pt-4 block md:hidden"
                     href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
@@ -63,45 +68,43 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                 )}
               </div>
             </div>
+
             <div className="flex justify-center space-y-2">
               <div className="flex flex-col items-start mb-2">
                 <h2 className="text-2xl font-semibold">Readings</h2>
                 <div className="mt-4">
                   <span className="font-medium">On&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.on &&
-                      kanji?.on.split(",").map((reading, index) => (
-                        <Badge
-                          className="text-md font-normal"
-                          key={index}
-                          variant="secondary"
-                        >
-                          {reading.trim()}
-                        </Badge>
-                      ))}
+                    {onReadings.map((reading, index) => (
+                      <Badge
+                        className="text-md font-normal"
+                        key={index}
+                        variant="secondary"
+                      >
+                        {reading}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
 
                 <div className="mt-4">
                   <span className="font-medium">Kun&apos;yomi:</span>
                   <div className="flex flex-wrap gap-2 mt-1">
-                    {kanji.kun &&
-                      kanji.kun.split(",").map((reading, index) => (
-                        <Badge
-                          className="text-md font-normal"
-                          key={index}
-                          variant="outline"
-                        >
-                          {reading.trim()}
-                        </Badge>
-                      ))}
+                    {kunReadings.map((reading, index) => (
+                      <Badge
+                        className="text-md font-normal"
+                        key={index}
+                        variant="outline"
+                      >
+                        {reading}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-            {process.env.NODE_ENV === "production" ? (
-              " "
-            ) : (
+
+            {process.env.NODE_ENV !== "production" && (
               <div className="flex justify-center md:justify-end">
                 <Link
                   className="hidden md:block"
@@ -113,39 +116,45 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
               </div>
             )}
           </div>
+
           <Separator className="my-6" />
+
           <div>
             <h2 className="text-2xl font-semibold mb-4">Related Words</h2>
-            <Tabs
-              defaultValue={kanji.words[0]?.id.toString()}
-              className="w-full"
-            >
-              <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
-                {kanji.words.map((word) => (
-                  <TabsTrigger
-                    key={word.id}
-                    value={word.id.toString()}
-                    className="px-4 py-3 text-lg"
-                  >
-                    {word.kanji}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <div className="mt-4">
-                {kanji.words.map((word) => (
-                  <TabsContent key={word.id} value={word.id.toString()}>
-                    <WordCard
-                      word={word.kanji}
-                      reading={word.reading}
-                      jlpt={word.jlpt}
-                      englishMeaning={word.word_en}
-                      spanishMeaning={word.word_es}
-                      sentences={word.sentences}
-                    />
-                  </TabsContent>
-                ))}
-              </div>
-            </Tabs>
+            {kanji.words.length > 0 ? (
+              <Tabs
+                defaultValue={kanji.words[0].id.toString()}
+                className="w-full"
+              >
+                <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+                  {kanji.words.map((word) => (
+                    <TabsTrigger
+                      key={word.id}
+                      value={word.id.toString()}
+                      className="px-4 py-3 text-lg"
+                    >
+                      {word.kanji}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                <div className="mt-4">
+                  {kanji.words.map((word) => (
+                    <TabsContent key={word.id} value={word.id.toString()}>
+                      <WordCard
+                        word={word.kanji}
+                        reading={word.reading}
+                        jlpt={word.jlpt}
+                        englishMeaning={word.word_en}
+                        spanishMeaning={word.word_es}
+                        sentences={word.sentences}
+                      />
+                    </TabsContent>
+                  ))}
+                </div>
+              </Tabs>
+            ) : (
+              <p className="text-gray-500">No related words available.</p>
+            )}
           </div>
         </CardContent>
       </Card>

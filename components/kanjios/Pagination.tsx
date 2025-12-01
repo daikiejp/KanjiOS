@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { PaginationProps } from '@/types/kanjiTypes';
+import { Button } from "@/components/ui/button";
+import { PaginationProps } from "@/types/index";
 
 export function Pagination({
   currentPage,
@@ -12,11 +12,11 @@ export function Pagination({
         <Button
           key={i}
           onClick={() => onPageChange(i + 1)}
-          variant={currentPage === i + 1 ? 'default' : 'outline'}
+          variant={currentPage === i + 1 ? "default" : "outline"}
           className={
             currentPage === i + 1
-              ? 'bg-[#29ABE2] text-white hover:bg-[#29ABE2]'
-              : 'bg-slate-100'
+              ? "bg-[#29ABE2] text-white hover:bg-[#29ABE2]"
+              : "bg-slate-100"
           }
         >
           {i + 1}

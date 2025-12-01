@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import KanjiCard from "@/components/kanjios/KanjiCard";
-import { KanjiTypes } from "@/types/kanjiTypes";
+import { Kanji } from "@/types/index";
 
 export default function KanjiDetail() {
-  const [kanji, setKanji] = useState<KanjiTypes | null>(null);
+  const [kanji, setKanji] = useState<Kanji | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const params = useParams();

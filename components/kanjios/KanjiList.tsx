@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { KanjiListCard } from '@/components/kanjios/KanjiListCard';
-import { SearchInput } from '@/components/kanjios/SearchInput';
-import { Pagination } from '@/components/kanjios/Pagination';
-import { KanjiListProps, KanjiTypes } from '@/types/kanjiTypes';
+import { useState, useEffect } from "react";
+import { KanjiListCard } from "@/components/kanjios/KanjiListCard";
+import { SearchInput } from "@/components/kanjios/SearchInput";
+import { Pagination } from "@/components/kanjios/Pagination";
+import { KanjiListProps, Kanji } from "@/types";
 
 export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const [kanjis, setKanjis] = useState<KanjiTypes[]>([]);
-  const [filteredKanjis, setFilteredKanjis] = useState<KanjiTypes[]>([]);
+  const [kanjis, setKanjis] = useState<Kanji[]>([]);
+  const [filteredKanjis, setFilteredKanjis] = useState<Kanji[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchKanjis();
@@ -22,7 +22,7 @@ export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
       (kanji) =>
         kanji.kanji.toLowerCase().includes(searchTerm.toLowerCase()) ||
         kanji.kanji_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kanji.kanji_es.toLowerCase().includes(searchTerm.toLowerCase())
+        kanji.kanji_es.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredKanjis(filtered);
     setCurrentPage(1);
@@ -31,15 +31,15 @@ export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
   const fetchKanjis = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/kanji');
+      const response = await fetch("/api/kanji");
       if (!response.ok) {
-        throw new Error('Failed to fetch kanjis');
+        throw new Error("Failed to fetch kanjis");
       }
       const data = await response.json();
       setKanjis(data);
       setFilteredKanjis(data);
     } catch (error) {
-      console.error('Error fetching kanjis:', error);
+      console.error("Error fetching kanjis:", error);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +57,7 @@ export default function KanjiList({ kanjisPerPage }: KanjiListProps) {
   const indexOfFirstKanji = indexOfLastKanji - kanjisPerPage;
   const currentKanjis = filteredKanjis.slice(
     indexOfFirstKanji,
-    indexOfLastKanji
+    indexOfLastKanji,
   );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);

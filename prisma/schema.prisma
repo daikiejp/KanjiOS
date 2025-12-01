@@ -38,13 +38,13 @@ model Word {
   reading     String
   kanji       String 
   jlpt        Int
-  kanjiKanji  String 
-  Kanji       Kanji  @relation(fields: [kanjiKanji], references: [kanji])
-  createdAt   DateTime @default(now())
+  kanjiId   Int
+  kanji_rel Kanji      @relation(fields: [kanjiId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
   updatedAt   DateTime @updatedAt
   sentences   Sentence[]
   
-  @@unique([kanji, word_en, word_es, kanjiKanji])
+  @@unique([kanji, word_en, word_es, kanjiId])
 }
 
 model Sentence {
