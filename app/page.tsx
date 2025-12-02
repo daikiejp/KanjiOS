@@ -1,8 +1,76 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+"use client";
+
+import { useRef, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".json")) {
+      toast({
+        title: "Invalid file",
+        description: "Please select a JSON file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      const response = await fetch("/api/kanji/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.log(error.errors[0]);
+        throw new Error("Failed to import: " + error.errors[0]);
+      }
+
+      const result = await response.json();
+
+      toast({
+        title: "Success",
+        description: result.message || "Kanji imported successfully",
+      });
+    } catch (error) {
+      console.error("Error importing kanji:" + error);
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to import kanji",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col items-center justify-center space-y-8">
       <h2 className="text-5xl font-bold text-[#29ABE2] text-center">
@@ -25,7 +93,7 @@ export default function Home() {
           Download
         </Button>
         <p className="text-center mt-2 text-sm text-gray-600">
-          v0.1.0-alpha{' '}
+          v0.1.0-alpha{" "}
           <span className="text-gray-500">(not ready for production)</span>
         </p>
       </div>
@@ -41,6 +109,26 @@ export default function Home() {
             Add Kanji
           </Button>
         </Link>
+
+        {process.env.NODE_ENV !== "production" && (
+          <>
+            <Button
+              className="text-2xl px-8 py-6 bg-purple-500 hover:bg-purple-700 w-full sm:w-auto"
+              onClick={handleImportClick}
+              disabled={isUploading}
+            >
+              <Upload className="mr-2 h-6 w-6" />
+              {isUploading ? "Importing..." : "Import Kanji"}
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </>
+        )}
       </div>
     </div>
   );

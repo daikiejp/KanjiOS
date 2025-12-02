@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm dlx prisma db push && pnpm dlx prisma generate && next build",
+    "prebuild": "mv prisma/schema.prisma.prod prisma/schema.prisma",
+    "build": "pnpm run prebuild && pnpm dlx prisma db push && pnpm dlx prisma generate && next build",
     "start": "next start",
     "lint": "eslint \"./**/*.+(ts|tsx)\"",
     "seed": "tsx prisma/seed.ts",

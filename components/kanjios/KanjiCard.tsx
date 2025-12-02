@@ -3,11 +3,44 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { KanjiCardProps } from "@/types";
 import { parseReadings } from "@/utils/readings";
 import Link from "next/link";
+import { Home, Pencil, Download, List } from "lucide-react";
 import WordCard from "@/components/kanjios/WordCard";
 import Jlpt from "@/components/kanjios/Jlpt";
+//import KanjiAnimator from "./Animate";
+
+async function exportKanji(kanjiData: KanjiCardProps["kanji"]) {
+  try {
+    const response = await fetch("/api/kanji/export", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kanji: kanjiData.kanji }),
+    });
+
+    if (!response.ok) throw new Error("Failed to export kanji");
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${kanjiData.kanji}.json`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error("Error exporting kanji:", error);
+    alert("Failed to export kanji");
+  }
+}
 
 export default function KanjiCard({ kanji }: KanjiCardProps) {
   const onReadings = parseReadings(kanji.on);
@@ -57,15 +90,81 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                     <span className="font-medium">Grade:</span> {kanji.grade}
                   </p>
                 </div>
-                {process.env.NODE_ENV !== "production" && (
-                  <Link
-                    className="pt-4 block md:hidden"
-                    href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
-                    passHref
-                  >
-                    <Button variant="outline">Edit Kanji</Button>
-                  </Link>
-                )}
+
+                <div className="mt-4">
+                  <TooltipProvider>
+                    <div className="flex gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link href="/">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="bg-white hover:bg-gray-100"
+                            >
+                              <Home className="h-4 w-4 text-[#FF7BAC]" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Home</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link href="/kanji">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="bg-white hover:bg-gray-100"
+                            >
+                              <List className="h-4 w-4 text-[#FF7BAC]" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Kanji List</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link
+                            href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
+                          >
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="bg-white hover:bg-gray-100"
+                            >
+                              <Pencil className="h-4 w-4 text-[#FF7BAC]" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit Kanji</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="bg-white hover:bg-gray-100"
+                            onClick={() => exportKanji(kanji)}
+                          >
+                            <Download className="h-4 w-4 text-[#FF7BAC]" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Export Kanji</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
+                </div>
               </div>
             </div>
 
@@ -104,17 +203,12 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
               </div>
             </div>
 
-            {process.env.NODE_ENV !== "production" && (
-              <div className="flex justify-center md:justify-end">
-                <Link
-                  className="hidden md:block"
-                  href={`/kanji/${encodeURIComponent(kanji.kanji)}/edit`}
-                  passHref
-                >
-                  <Button variant="outline">Edit Kanji</Button>
-                </Link>
+            {/*<div className="flex justify-center space-y-2">
+              <div className="flex flex-col items-start mb-2">
+                <h2 className="text-2xl font-semibold">Stroke Order</h2>
+                <KanjiAnimator />
               </div>
-            )}
+            </div>*/}
           </div>
 
           <Separator className="my-6" />

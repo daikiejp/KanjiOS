@@ -107,6 +107,10 @@ export default function EditKanji() {
   }, [slug, reset, toast]);
 
   const onSubmit = async (data: KanjiFormData) => {
+    if (process.env.NODE_ENV === "production") {
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {

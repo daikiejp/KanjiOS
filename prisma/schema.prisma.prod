@@ -11,7 +11,7 @@ generator client {
 
 // change "sqlite" in local && "postgresql" in production
 datasource db {
-  provider = "sqlite"
+  provider = "postgesql"
 }
 
 model Kanji {
