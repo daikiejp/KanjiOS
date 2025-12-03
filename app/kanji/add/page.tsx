@@ -72,7 +72,7 @@ export default function AddKanji() {
   };
 
   const onSubmit = async (data: KanjiFormData) => {
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === ("production" as string)) {
       return;
     }
 
