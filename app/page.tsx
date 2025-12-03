@@ -1,16 +1,35 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface Counts {
+  sentences: number;
+  words: number;
+  kanji: number;
+}
+
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [counts, setCounts] = useState<Counts | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchCounts().then(setCounts).catch(console.error);
+  }, []);
+
+  async function fetchCounts() {
+    const res = await fetch("/api/kanji/counts");
+    if (!res.ok) throw new Error("Error getting counts");
+    return res.json();
+  }
+
+  if (!counts) return console.log("error");
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -82,8 +101,8 @@ export default function Home() {
           <p className="text-lg text-gray-700 leading-relaxed">
             We know that kanji is the hardest part of learning Japanese, which
             is why we provide resources and examples of the 2136 kanji to help
-            you learn in the best possible way. You can download the SQLite
-            database for web/app development, completely free.
+            you learn in the best possible way. You can also download the JSON
+            files for web/app development, completely free.
           </p>
         </CardContent>
       </Card>
@@ -95,6 +114,10 @@ export default function Home() {
         <p className="text-center mt-2 text-sm text-gray-600">
           v0.1.0-alpha{" "}
           <span className="text-gray-500">(not ready for production)</span>
+        </p>
+        <p className="text-center text-sm text-gray-500">
+          Kanji: {counts.kanji}, Words: {counts.words}, Sentences:{" "}
+          {counts.sentences}
         </p>
       </div>
 

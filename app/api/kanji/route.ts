@@ -1,9 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import { CreateKanjiPayload } from "@/types";
-import { stringifyReadings } from "@/utils/readings";
 
 export async function POST(request: NextRequest) {
+  if (process.env.NODE_ENV === "production") {
+    return;
+  }
+
   try {
     const body = await request.json();
 
