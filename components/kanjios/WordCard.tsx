@@ -180,7 +180,7 @@ export default function WordCard({
           </div>
           <Jlpt jlpt={jlpt as 1 | 2 | 3 | 4 | 5} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
           <div>
             <Badge variant="outline" className="mb-1">
               EN
