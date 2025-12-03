@@ -13,3 +13,11 @@ We also provide the database with 2136 Kanji, which is expected to be completed 
 ## License
 
 [GPL-3.0](https://github.com/daikiejp/kanjios/blob/master/LICENSE)
+
+## KanjiVG Attribution
+
+This project uses kanji vector data from [KanjiVG](http://kanjivg.tagaini.net),  
+licensed under **Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)**.  
+The data has been modified for use in this project.
+
+For more details, see [`KANJIVG_LICENSE_NOTICE.md`](./KANJIVG_LICENSE_NOTICE.md).
