@@ -184,7 +184,12 @@ export default function EditKanji() {
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#FF7BAC]"></div>
+        <div className="relative flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#FF7BAC]"></div>
+          <div className="absolute inset-0 flex items-center justify-center text-4xl text-[#29ABE2] font-semibold">
+            漢字
+          </div>
+        </div>
       </div>
     );
   }
