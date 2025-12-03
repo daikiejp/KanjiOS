@@ -15,7 +15,7 @@ import Link from "next/link";
 import { Home, Pencil, Download, List } from "lucide-react";
 import WordCard from "@/components/kanjios/WordCard";
 import Jlpt from "@/components/kanjios/Jlpt";
-//import KanjiAnimator from "./Animate";
+import Kanjimator from "@/components/kanjios/Kanjimator";
 
 async function exportKanji(kanjiData: KanjiCardProps["kanji"]) {
   try {
@@ -203,12 +203,12 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
               </div>
             </div>
 
-            {/*<div className="flex justify-center space-y-2">
+            <div className="flex justify-center space-y-2">
               <div className="flex flex-col items-start mb-2">
                 <h2 className="text-2xl font-semibold">Stroke Order</h2>
-                <KanjiAnimator />
+                <Kanjimator kanji={kanji.kanji} />
               </div>
-            </div>*/}
+            </div>
           </div>
 
           <Separator className="my-6" />
