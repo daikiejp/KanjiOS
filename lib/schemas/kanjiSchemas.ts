@@ -12,6 +12,8 @@ export const wordSchema = z.object({
   id: z.number().optional(),
   word_en: z.string().min(1, "English word is required"),
   word_es: z.string().min(1, "Spanish word is required"),
+  pos_en: z.string().min(1, "English Part of Speech is required"),
+  pos_es: z.string().min(1, "Se requiere la categoría gramatical en español"),
   reading: z.string().min(1, "Reading is required"),
   kanji: z.string().min(1, "Kanji is required"),
   jlpt: z.number().min(1).max(5),

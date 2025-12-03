@@ -240,6 +240,8 @@ export default function KanjiCard({ kanji }: KanjiCardProps) {
                         jlpt={word.jlpt}
                         englishMeaning={word.word_en}
                         spanishMeaning={word.word_es}
+                        posEn={word.pos_en}
+                        posEs={word.pos_es}
                         sentences={word.sentences}
                       />
                     </TabsContent>

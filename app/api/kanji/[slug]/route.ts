@@ -132,6 +132,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
             data: {
               word_en: word.word_en,
               word_es: word.word_es,
+              pos_en: word.pos_en,
+              pos_es: word.pos_es,
               reading: word.reading,
               kanji: word.kanji,
               jlpt: word.jlpt,
@@ -164,6 +166,8 @@ export async function PUT(request: NextRequest, context: RouteContext) {
               kanji: word.kanji,
               word_en: word.word_en,
               word_es: word.word_es,
+              pos_en: word.pos_en,
+              pos_es: word.pos_es,
               reading: word.reading,
               jlpt: word.jlpt,
               kanjiId: existingKanji.id,

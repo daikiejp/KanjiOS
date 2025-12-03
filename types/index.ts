@@ -17,6 +17,8 @@ export interface Word {
   id: number;
   word_en: string;
   word_es: string;
+  pos_en: string;
+  pos_es: string;
   reading: string;
   kanji: string;
   jlpt: number;
@@ -106,6 +108,8 @@ export interface CreateKanjiPayload {
   words: {
     word_en: string;
     word_es: string;
+    pos_en: string;
+    pos_es: string;
     reading: string;
     kanji: string;
     jlpt: number;
@@ -124,6 +128,8 @@ export interface UpdateKanjiPayload extends CreateKanjiPayload {
     id?: number;
     word_en: string;
     word_es: string;
+    pos_en: string;
+    pos_es: string;
     reading: string;
     kanji: string;
     jlpt: number;

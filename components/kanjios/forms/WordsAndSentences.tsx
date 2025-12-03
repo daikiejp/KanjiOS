@@ -44,6 +44,8 @@ export function WordsAndSentences({ control }: WordsAndSentencesProps) {
           appendWord({
             word_en: "",
             word_es: "",
+            pos_en: "",
+            pos_es: "",
             reading: "",
             kanji: "",
             jlpt: 5,
@@ -140,6 +142,30 @@ function WordAccordionItem({
                 control={control}
                 render={({ field }) => (
                   <Input {...field} id={`words.${wordIndex}.word_es`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.pos_en`}>
+                English Part of Speech
+              </Label>
+              <Controller
+                name={`words.${wordIndex}.pos_en`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.pos_en`} />
+                )}
+              />
+            </div>
+            <div>
+              <Label htmlFor={`words.${wordIndex}.pos_es`}>
+                Spanish Part of Speech
+              </Label>
+              <Controller
+                name={`words.${wordIndex}.pos_es`}
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id={`words.${wordIndex}.pos_es`} />
                 )}
               />
             </div>

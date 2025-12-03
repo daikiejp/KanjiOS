@@ -25,6 +25,8 @@ const DEFAULT_SENTENCE = {
 const DEFAULT_WORD = {
   word_en: "",
   word_es: "",
+  pos_en: "",
+  pos_es: "",
   reading: "",
   kanji: "",
   jlpt: 5,
@@ -92,6 +94,8 @@ export default function AddKanji() {
         words: data.words.map((word) => ({
           word_en: word.word_en,
           word_es: word.word_es,
+          pos_en: word.pos_en,
+          pos_es: word.pos_es,
           reading: word.reading,
           kanji: word.kanji,
           jlpt: word.jlpt,

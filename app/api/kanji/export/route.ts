@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
         word_en: word.word_en,
         word_es: word.word_es,
         reading: word.reading,
+        pos_en: word.pos_en,
+        pos_es: word.pos_es,
         kanji: word.kanji,
         jlpt: word.jlpt,
         sentences: word.sentences.map((sentence) => ({

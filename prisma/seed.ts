@@ -51,6 +51,8 @@ interface KanjiData {
 interface WordData {
   word_en: string;
   word_es: string;
+  pos_en: string;
+  pos_es: string;
   reading: string;
   kanji: string;
   jlpt: number;
@@ -89,6 +91,8 @@ async function processKanjiData(data: KanjiData): Promise<void> {
         create: data.words.map((word: WordData) => ({
           word_en: word.word_en,
           word_es: word.word_es,
+          pos_en: word.pos_en,
+          pos_es: word.pos_es,
           reading: word.reading,
           kanji: word.kanji,
           jlpt: word.jlpt,

@@ -35,6 +35,8 @@ model Word {
   id          Int    @id @default(autoincrement())
   word_en     String
   word_es     String
+  pos_en      String
+  pos_es      String
   reading     String
   kanji       String 
   jlpt        Int

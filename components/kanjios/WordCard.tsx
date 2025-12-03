@@ -25,6 +25,8 @@ export default function WordCard({
   reading,
   englishMeaning,
   spanishMeaning,
+  posEn,
+  posEs,
   jlpt,
   sentences,
 }: {
@@ -32,6 +34,8 @@ export default function WordCard({
   reading: string;
   englishMeaning: string;
   spanishMeaning: string;
+  posEn: string;
+  posEs: string;
   jlpt: number;
   sentences: Sentence[];
 }) {
@@ -159,12 +163,24 @@ export default function WordCard({
     <Card className="bg-gray-50">
       <CardContent className="p-4">
         <div className="flex justify-between items-center mb-2">
-          <p className="text-xl">
+          <div className="text-xl">
             <span className="font-bold text-[#FF7BAC]">{word}</span> ({reading})
-          </p>
+            <span className="text-xs ml-4">
+              <Badge variant="outline" className="mb-1">
+                EN
+              </Badge>
+              <span className="ml-2">{posEn}</span>
+            </span>
+            <span className="text-xs ml-4">
+              <Badge variant="outline" className="mb-1">
+                ES
+              </Badge>
+              <span className="ml-2">{posEs}</span>
+            </span>
+          </div>
           <Jlpt jlpt={jlpt as 1 | 2 | 3 | 4 | 5} />
         </div>
-        <div className="flex space-x-4 mb-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
             <Badge variant="outline" className="mb-1">
               EN
